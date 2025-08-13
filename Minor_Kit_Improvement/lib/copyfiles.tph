@@ -1,0 +1,37 @@
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK01.SPL~ ~override~	//炎阳势
+	SAY NAME1 @141    SAY UNIDENTIFIED_DESC @151
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK02.SPL~ ~override~	//月阴势
+	SAY NAME1 @142    SAY UNIDENTIFIED_DESC @152
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK03.SPL~ ~override~	//升龙拳
+	SAY NAME1 @143    SAY UNIDENTIFIED_DESC @153
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK04.SPL~ ~override~	//猛虎出柙
+	SAY NAME1 @144    SAY UNIDENTIFIED_DESC @154
+  
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK05.SPL~ ~override~	//谋杀之手
+	SAY NAME1 @145    SAY UNIDENTIFIED_DESC @155
+  
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK06.SPL~ ~override~	//防护投射
+	SAY NAME1 @146    SAY UNIDENTIFIED_DESC @156
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK07.SPL~ ~override~	//无影踢
+	SAY NAME1 @116    SAY UNIDENTIFIED_DESC @126
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK08.SPL~ ~override~	//影之姿
+	SAY NAME1 @114    SAY UNIDENTIFIED_DESC @124
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK09.SPL~ ~override~	//毒咒
+	SAY NAME1 @113    SAY UNIDENTIFIED_DESC @123
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK10.SPL~ ~override~	//闪耀之粉
+	SAY NAME1 @112    SAY UNIDENTIFIED_DESC @122
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK0B.SPL~ ~override~	//调息
+	SAY NAME1 @111    SAY UNIDENTIFIED_DESC @121
+
+COPY ~%MOD_FOLDER%/improvedmonk/spells/IPMONK0C.SPL~ ~override~	//眼难及
+	SAY NAME1 @115    SAY UNIDENTIFIED_DESC @125
+
+COPY ~%MOD_FOLDER%/improvedmonk/noname~ ~override~

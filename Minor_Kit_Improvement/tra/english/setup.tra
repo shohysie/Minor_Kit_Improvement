@@ -1,0 +1,27 @@
+@101 = ~Improve monk with Balthazar' abilities~ 
+@102 = ~This MOD only fits EE games~
+@103 = ~Only improves the base class monk with no kit~
+@104 = ~Improves all monk kits, including installed monk kit MODs~
+@105 = ~Work as a new kit, the Honed Monk~
+@106 = ~Allowing monks to use two-handed light weapons (staves and spears), supports monk kit MODs already installed. With disadvantage that attack animations are a little out of step~
+@107 = ~Allowing all bare-handed skills (e.g. Stunning Blow and Quivering Palm) of monks to be effective also on melee weapons. Supports monk kit MODs installed already~
+@199 = ~Detected incompatible old version of Improve Monk, please uninstall it first~
+
+@201 = "Improved Wizard Slayer"
+@202 = "Allows Wizard Slayers to use potions normally"
+@203 = "Allows Wizard Slayers to wear bracers, belts, cloaks, and all items unusable by mages but equippable by pure-class warriors"
+@211 = "This MOD only fits EE games"
+@212 = "Requires installation of the first component"
+@299 = "Detected incompatible old version of Improve Wizard Slayer, please uninstall it first"
+
+@301 = "Shaman Hauler"
+@320 = "Unsupported game version"
+@322 = "Enables manual control of Shaman-summoned spirits"
+@399 = "Detected incompatible old version of Shaman Hauler, please uninstall it first"
+
+@401 = "Improved Beastmaster"
+
+@501 = "Dragon Disciple Reincarnation (Transforms into specified class and kit, disables original spellcasting, retains passive draconic traits: AC bonuses, Constitution, fire resistance, etc.)"
+@502 = "Overhauls Dragon Disciple's passive progression rewards to align with 3rd Edition rules"
+
+

@@ -1,0 +1,17 @@
+IF
+	Global("SHAM#HL1","GLOBAL",1)
+THEN
+	RESPONSE #100
+		CreateCreature("SHAM#HLA",[99.99],0)
+		SetGlobal("SHAM#HL1","GLOBAL",0)
+		Continue()
+END
+
+IF
+	Global("SHAM#HL2","GLOBAL",1)
+THEN
+	RESPONSE #100
+		CreateCreature("SHAM#HLB",[100.100],0)
+		SetGlobal("SHAM#HL2","GLOBAL",0)
+		Continue()
+END

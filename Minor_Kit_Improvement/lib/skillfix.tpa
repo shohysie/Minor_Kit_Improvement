@@ -1,0 +1,24 @@
+DEFINE_ACTION_FUNCTION ~MONK_SKILL_FIX~
+  STR_VAR
+    2daname=~~
+BEGIN
+	COPY_EXISTING ~%2daname%.2da~ ~override~
+		COUNT_2DA_COLS cols
+		COUNT_2DA_ROWS cols rows
+		FOR (colindex = 0; colindex < cols ; ++colindex) BEGIN
+			FOR (rowindex = 0; rowindex < rows ; ++rowindex) BEGIN
+				READ_2DA_ENTRY rowindex colindex cols monkability
+				PATCH_IF ( NOT (~%monkability%~ STRING_CONTAINS_REGEXP ~[GA][AP]_~)) BEGIN
+					LPF SUBSTRING INT_VAR start = 3 length = ((STRING_LENGTH ~%monkability%~) -3) STR_VAR string = ~%monkability%~ RET substring END
+					PATCH_IF FILE_EXISTS_IN_GAME ~%substring%.spl~ BEGIN
+						INNER_ACTION BEGIN				
+							COPY_EXISTING ~%substring%.spl~ ~override~
+								LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 248 parameter2 = 0 END
+							BUT_ONLY
+						END
+					END
+				END
+			END
+		END
+	BUT_ONLY
+END

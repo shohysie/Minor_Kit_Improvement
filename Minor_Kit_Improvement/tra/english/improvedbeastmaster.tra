@@ -1,0 +1,5 @@
+@420 = "Under the command of Beastmaster"
+
+@421 = "^\(Advantages\)[: ]*$"
+@422 = "Advantages:
+PACK COMMAND：Grants all allied animals within line of sight Temporary HP (10 + 10 HP per 5 Beastmaster levels), Combat Bonuses (+1 to hit/damage/saves/AC per 5 Beastmaster levels), Regeneration (1 + 1 HP/round per 5 Beastmaster levels) and Attack Per Round (1/2 + 1/2 APR per 10 Beastmaster levels). It also grants them immunity against Fear & Morale Broken (at LV1), Charm & Control (at LV5), Confusion (at LV10), and some of the Death Effects (e.g. Power Word Kill, Deathblow, at LV15). All enhancements rapidly fade when animals leave the Beastmaster's visual range."

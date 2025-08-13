@@ -1,0 +1,961 @@
+BACKUP ~Minor_Kit_Improvement/backup~
+AUTHOR ~shohy@126.com~
+
+VERSION ~v0.2~
+AUTO_EVAL_STRINGS
+
+README ~%MOD_FOLDER%/README.%LANGUAGE%.txt~
+AUTO_TRA ~%MOD_FOLDER%/tra/%s~
+
+LANGUAGE  ~American English~	~english~	~Minor_Kit_Improvement/tra/english/setup.tra~
+											~Minor_Kit_Improvement/tra/english/improvedbeastmaster.tra~
+											~Minor_Kit_Improvement/tra/english/improvedmonk.tra~
+											~Minor_Kit_Improvement/tra/english/ImprovedWizardSlayer.tra~
+											~Minor_Kit_Improvement/tra/english/prestigedragondisciple.tra~
+											~Minor_Kit_Improvement/tra/english/shaman_hauler.tra~
+											
+LANGUAGE  ~Simplified Chinese~	~schinese~	~Minor_Kit_Improvement/tra/schinese/setup.tra~
+											~Minor_Kit_Improvement/tra/schinese/improvedbeastmaster.tra~
+											~Minor_Kit_Improvement/tra/schinese/improvedmonk.tra~ 
+											~Minor_Kit_Improvement/tra/schinese/improvedwizardslayer.tra~
+											~Minor_Kit_Improvement/tra/schinese/prestigedragondisciple.tra~
+											~Minor_Kit_Improvement/tra/schinese/shaman_hauler.tra~
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// The Improved Monk
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+BEGIN @103	//仅强化无宗派武僧
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @102	//版本不对
+FORBID_COMPONENT "Setup-improvedMonk.tp2" "0" @109	//已经安装了旧版
+SUBCOMPONENT @101
+
+INCLUDE ~%MOD_FOLDER%/lib/basemonk.tph~
+INCLUDE ~%MOD_FOLDER%/lib/copyfiles.tph~
+
+
+///////////////////////////////////////////////////////////////////////
+BEGIN @104	//强化所有僧侣宗派（包括已安装的宗派MOD）
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @102	//版本不对
+FORBID_COMPONENT "Setup-improvedMonk.tp2" "0" @109	//已经安装了旧版
+SUBCOMPONENT @101
+
+INCLUDE ~%MOD_FOLDER%/lib/basemonk.tph~
+
+//读取kitlist中ability列，确定各宗派武僧非高阶技能列表的名称（kitlist列表必为宗派，不包含无宗派）
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 10 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 8 9 readclass
+		PATCH_IF (%readclass% = 20) BEGIN
+			READ_2DA_ENTRY kitrow 1 9 "kitname"
+			READ_2DA_ENTRY kitrow 5 9 "kitability"
+			INNER_ACTION BEGIN	//处理非高阶技能列表
+				APPEND ~%kitability%.2da~ ~ABILITYA **** **** **** **** **** **** GA_IPMONK09 **** **** GA_IPMONK08 **** **** **** **** GA_IPMONK08 GA_IPMONK09 **** **** **** **** **** **** **** **** GA_IPMONK09 CDREPLACE
+ABILITYB GA_IPMONK0B **** **** GA_IPMONK10 **** **** GA_IPMONK10 **** **** GA_IPMONK10 GA_IPMONK07 **** **** **** GA_IPMONK0C GA_IPMONK07 **** **** **** **** GA_IPMONK0C **** **** **** **** CDREPLACE~
+				COPY_EXISTING ~%kitability%.2da~ ~override~
+					COUNT_2DA_COLS cols
+					FOR (index = 27; index < cols ; ++index) BEGIN
+						REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
+					END
+					REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
+				PRETTY_PRINT_2DA
+				//读取luabbr.2da中abbrev列，确定无宗派武僧各宗派高阶技能列表的名称（MO1等）
+				COPY_EXISTING ~luabbr.2da~ ~override~
+					COUNT_2DA_ROWS 2 kitsmaxl
+					FOR (kitrowl = 0 ; kitrowl < kitsmaxl ; ++kitrowl) BEGIN
+						READ_2DA_ENTRY kitrowl 0 2 kitnamel
+						PATCH_IF ("%kitnamel%" STRING_COMPARE_CASE "%kitname%" = 0) BEGIN	//宗派名称和kitlist中相符，为武僧宗派（不包含无宗派）
+							READ_2DA_ENTRY kitrowl 1 2 kitabbrev
+							INNER_ACTION BEGIN
+								//高阶技能，共⑥种
+								COPY_EXISTING_REGEXP ~LU%kitabbrev%.2da~ ~override~
+									COUNT_2DA_ROWS ~9~ "rows"
+									SET "patch" = 0
+									SET "alreadyfixed" = 0									
+									FOR ( index = 1 ; index < rows ; index = index + 1 ) BEGIN
+									  READ_2DA_ENTRY "%index%" 1 9 "abil"
+									  PATCH_IF ("%abil%" STRING_COMPARE_CASE "GA_IPMONK01" = 0) BEGIN	//遇到改过的
+										SET "alreadyfixed" = 1	//这个文件已经改过啦
+									  END
+									  PATCH_IF ("%abil%" STRING_COMPARE_CASE "*" = 0) & ("%alreadyfixed%" = 0) BEGIN	//遇到空行
+										SET "patch" = "%patch%" + 1	//空行计数
+										PATCH_IF ("%patch%" <= 6) BEGIN
+											SET EVALUATE_BUFFER "emptyrow%patch%" = "%index%"	//记下前六个空行位置
+											//PATCH_PRINT "row%index% is empty"
+											//PATCH_PRINT "emptyrow%patch% is recorded"
+										END
+									  END
+									END
+									PATCH_IF ("%patch%" < 6) & ("%alreadyfixed%" = 0) BEGIN	//空行数不够，追加。缺6-"%patch%"行
+										SET "maxrows" = "%rows%" + 6 - "%patch%"
+										//PATCH_PRINT "required rows are 6-%patch%"
+										//PATCH_PRINT "add row at %rows% to less than %maxrows%"
+										FOR ( index =  "%rows%" ; index < "%maxrows%" ; index = index + 1 ) BEGIN
+											INSERT_2DA_ROW "%index%" 9 ~%index%         *          *          *          *          *          *           *            *           *                  ~
+											SET "patch" = "%patch%" + 1	//空行计数
+											SET EVALUATE_BUFFER "emptyrow%patch%" = "%index%"
+										END
+									END
+									PATCH_IF ("%alreadyfixed%" = 0) BEGIN
+										FOR ( patch = 1 ; patch < 7 ; patch = patch + 1 ) BEGIN
+											SET_2DA_ENTRY "emptyrow%patch%" 1 9 ~GA_IPMONK0%patch%~
+											SET_2DA_ENTRY "emptyrow%patch%" 4 9 ~1~
+											SET_2DA_ENTRY "emptyrow%patch%" 5 9 ~99~
+											SET_2DA_ENTRY "emptyrow%patch%" 6 9 ~20~
+										END
+									END
+							END
+						END
+					END
+				BUT_ONLY
+			END
+		END
+	END
+BUT_ONLY
+
+INCLUDE ~%MOD_FOLDER%/lib/copyfiles.tph~
+
+
+///////////////////////////////////////////////////////////////////////
+BEGIN @105	//作为新宗派（历练武僧）
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @102	//版本不对
+FORBID_COMPONENT "Setup-improvedMonk.tp2" "0" @109	//已经安装了旧版
+SUBCOMPONENT @101
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_D.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_D.2DA~
+END
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_G.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_G.2DA~
+END
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_E.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_E.2DA~
+END
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HE.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HE.2DA~
+END
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HL.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HL.2DA~
+END
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HO.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HO.2DA~
+END
+
+INCLUDE ~%MOD_FOLDER%/lib/copyfiles.tph~
+INCLUDE ~%MOD_FOLDER%/lib/fl#add_kit_ee.tpa~
+
+
+COPY ~%MOD_FOLDER%/improvedmonk/2da/LUMOI.2DA~ ~override~
+
+ADD_KIT ~MOIP~
+/* CLASWEAP.2DA */
+	~MOIP 1 1 1 1 1 0 0 0~
+/* WEAPPROF.2DA */
+	~MOIP 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
+/* ABCLASRQ.2DA */
+	~MOIP 0 9 11 0 9 0~
+/* ABCLSMOD.2DA */
+	~MOIP 0 0 0 0 0 0~
+/* ABDCDSRQ.2DA */
+	~MOIP 0 17 17 0 17 0~
+/* ABDCSCRQ.2DA */
+	~MOIP 0 15 15 0 15 0~
+/* ALIGNMNT.2DA */
+	~MOIP 1 1 1 0 0 0 0 0 0~
+/* DUALCLAS.2DA */
+	~MOIP 0 0 0 0 0 0~
+/* The path of abilities 2DA file */
+	~%MOD_FOLDER%/improvedmonk/2da/CLABMOIP.2DA~
+/* KITTABLE.2DA */
+	~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
+/* KITLIST.2DA */
+	~0x00004000 20~
+/* LUABBR.2DA */
+	~MOI~
+/* 25STWEAP.2DA */
+	~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
+	SAY @108
+	SAY @108
+	SAY @109
+
+	LAF fl#add_kit_ee
+	  STR_VAR
+	    kit_name = MOIP
+	    clswpbon = ~1 3 2~
+	    hpclass = ~HPMONK~
+	    clsrcreq = ~1 1 1 1 1 1 1~
+	    numwslot = 3
+	    clascolr = ~25 28 57 2 24~
+	END
+
+
+
+BEGIN @106	//允许武僧使用双手轻武器（手杖和长枪），支持所有宗派，缺点是攻击动画不合拍
+FORBID_COMPONENT "Setup-improvedMonk.tp2" "1" @109	//已经安装了旧版
+
+//BAND	00=>0 01=>0 11=>1
+//BOR	00=>0 01=>1 11=>1
+//BXOR	00=>0 01=>1 11=>0
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+	READ_BYTE 0x1c wpcate	//读取武器类型
+	READ_BYTE 0x31 wpprof	//读取武器熟练
+	READ_SHORT 0x22 wpapp	//读取武器外形
+	PATCH_IF (wpcate = 26) OR (wpprof = 102) BEGIN	//武器类型或武器掌握是手杖
+		READ_BYTE 0x18 wpflags1
+		READ_BYTE 0x19 wpflags2
+		READ_BYTE 0x20 wpuse
+		PATCH_IF (((wpflags1 BAND 0b00000110) = 0b00000110) OR ((wpflags2 BAND 0b00010000) = 0b00010000)) AND ((wpuse BAND 0b01000000) = 0) BEGIN // 可移动，双手或伪双手，盗贼可用
+			WRITE_BYTE 0x21 (THIS BAND 0b11011111)	//BIT5归0其它不变，武僧可用
+			PATCH_IF (wpapp = 21329) BEGIN	//动画是手杖，修改挥舞动画
+				READ_SHORT 0x68 wpheads	//读取物品能力数
+					FOR (wpability = 0 ; wpability < wpheads ; ++wpability) BEGIN
+						READ_BYTE ( 0x72 + 0x38 * wpability ) wpheadtype
+						READ_BYTE ( 0x74 + 0x38 * wpability ) wpheadlocation
+						PATCH_IF ( wpheadtype = 1 ) & ( wpheadlocation = 1 ) BEGIN //近战
+							WRITE_SHORT ( 0x9e + 0x38 * wpability ) 20
+							WRITE_SHORT ( 0xa0 + 0x38 * wpability ) 70
+							WRITE_SHORT ( 0xa2 + 0x38 * wpability ) 10
+						END
+					END
+			END
+		END
+	END
+	PATCH_IF (wpcate = 29) OR (wpprof = 98) BEGIN	//武器类型或武器掌握是长矛
+		READ_BYTE 0x18 wpflags1
+		READ_BYTE 0x19 wpflags2
+		READ_BYTE 0x20 wpuse
+		PATCH_IF (((wpflags1 BAND 0b00000110) = 0b00000110) OR ((wpflags2 BAND 0b00010000) = 0b00010000)) AND ((wpuse BAND 0b00110011) = 0) BEGIN // 可移动，双手或伪双手，勇士类可用
+			WRITE_BYTE 0x21 (THIS BAND 0b11011111)	//BIT5归0其它不变，武僧可用
+			PATCH_IF (wpapp = 20563) BEGIN	//动画是长矛，修改挥舞动画
+				READ_SHORT 0x68 wpheads	//读取物品能力数
+					FOR (wpability = 0 ; wpability < wpheads ; ++wpability) BEGIN
+						READ_BYTE ( 0x72 + 0x38 * wpability ) wpheadtype
+						READ_BYTE ( 0x74 + 0x38 * wpability ) wpheadlocation
+						PATCH_IF ( wpheadtype = 1 ) & ( wpheadlocation = 1 ) BEGIN //近战
+							WRITE_SHORT ( 0x9e + 0x38 * wpability ) 10
+							WRITE_SHORT ( 0xa0 + 0x38 * wpability ) 20
+							WRITE_SHORT ( 0xa2 + 0x38 * wpability ) 70
+						END
+					END
+			END
+		END
+	END
+BUT_ONLY
+
+//武僧可以在手杖、长枪和各武器流派投入技能点
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 10 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 8 9 readclass
+		PATCH_IF (%readclass% = 20) BEGIN	//寻找武僧宗派
+			READ_2DA_ENTRY kitrow 1 9 "kitname"	//记下名称
+			//PATCH_PRINT "%kitname%"
+			INNER_ACTION BEGIN	//处理非高阶技能列表
+				COPY_EXISTING ~weapprof.2da~ ~override~
+					COUNT_2DA_COLS kitsmaxl
+					FOR (kitcol = 0 ; kitcol < (kitsmaxl - 1) ; ++kitcol) BEGIN
+						READ_2DA_ENTRY 0 kitcol 30 kitnamel
+						PATCH_IF ("%kitnamel%" STRING_COMPARE_CASE "%kitname%" = 0) OR ("%kitnamel%" STRING_COMPARE_CASE "MONK" = 0) BEGIN
+							//PATCH_PRINT "%kitnamel%"
+						//宗派名称和kitlist中相符，为武僧宗派。无宗派武僧也要处理
+							SET_2DA_ENTRY 10 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 11 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 14 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 15 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 16 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 18 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 19 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 23 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 27 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 28 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 29 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 30 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 31 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 32 (kitcol + 1) 30 ~3~
+						END
+					END
+				BUT_ONLY
+			END
+		END
+	END
+BUT_ONLY
+
+
+BEGIN @107	//将武僧所有仅限徒手使用的技能（如果有的话）改为对武器也有效
+
+INCLUDE ~%MOD_FOLDER%/lib/skillfix.tpa~
+
+//无宗派武僧
+ACTION_DEFINE_ASSOCIATIVE_ARRAY monk2das BEGIN
+	CLABMO01 => 0 LUMO0 => 0
+END
+
+//读取kitlist中ability列，确定各宗派武僧非高阶技能列表的名称（kitlist列表必为宗派，不包含无宗派）
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 10 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 8 9 readclass
+		PATCH_IF (%readclass% = 20) BEGIN
+			READ_2DA_ENTRY kitrow 1 9 "kitname"
+			READ_2DA_ENTRY kitrow 5 9 "kitability"
+			DEFINE_ASSOCIATIVE_ARRAY monk2das BEGIN
+				"%kitability%" => 0
+			END
+			INNER_ACTION BEGIN	//处理非高阶技能列表
+				//读取luabbr.2da中abbrev列，确定无宗派武僧各宗派高阶技能列表的名称（MO1等）
+				COPY_EXISTING ~luabbr.2da~ ~override~
+					COUNT_2DA_ROWS 2 kitsmaxl
+					FOR (kitrowl = 0 ; kitrowl < kitsmaxl ; ++kitrowl) BEGIN
+						READ_2DA_ENTRY kitrowl 0 2 kitnamel
+						PATCH_IF ("%kitnamel%" STRING_COMPARE_CASE "%kitname%" = 0) BEGIN	//宗派名称和kitlist中相符，为武僧宗派（不包含无宗派）
+							READ_2DA_ENTRY kitrowl 1 2 kitabbrev
+							DEFINE_ASSOCIATIVE_ARRAY monk2das BEGIN
+								"LU%kitabbrev%" => 0
+							END
+						END
+					END
+				BUT_ONLY
+			END
+		END
+	END
+BUT_ONLY
+
+//读取每个2da里面的武僧技能并处理
+ACTION_PHP_EACH monk2das AS monk2da => foo BEGIN
+	LAF MONK_SKILL_FIX STR_VAR 2daname = ~%monk2da%~ END
+END
+
+
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// The Improved WizardSlayer
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+BEGIN @201
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME ~BD1000.are~ @211
+FORBID_COMPONENT "SETUP-ImprovedWizardSlayer.tp2" "0" @210	//已经安装了旧版
+
+INCLUDE ~%MOD_FOLDER%/lib/_functions.tpa~
+
+//改变描述
+COPY_EXISTING ~KITLIST.2DA~ ~override~
+	COUNT_2DA_ROWS 9 kitsmax
+	FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+	READ_2DA_ENTRY kitrow 1 9 readkit
+		PATCH_IF ("%readkit%" STRING_COMPARE_CASE "WIZARD_SLAYER" = 0) BEGIN
+		READ_2DA_ENTRY kitrow 5 9 wsability
+		READ_2DA_ENTRY kitrow 4 9 desc_strref	//25203
+            PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+				GET_STRREF desc_strref desc	//原描述文本
+				//PATCH_PRINT ~%desc%~
+				INNER_PATCH_SAVE newdesc ~%desc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @221
+					SPRINT adddesc  @222
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				//PATCH_PRINT ~%newdesc%~
+				INNER_ACTION BEGIN
+					STRING_SET_EVALUATE desc_strref ~%newdesc%~
+				END
+			END
+			//SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(~%desc%~)
+		END
+	END
+BUT_ONLY
+
+//处理技能列表
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%wsability%.2DA~ ~AP_SH#IWS0~) THEN BEGIN
+	APPEND ~%wsability%.2da~ ~ABILITYX AP_SH#IWS0 AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** **** CDREPLACE~
+	COPY_EXISTING ~%wsability%.2da~ ~override~
+		COUNT_2DA_COLS cols
+		FOR (index = 22 ; index < cols ; ++index) BEGIN
+			REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
+		END
+		REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
+		PRETTY_PRINT_2DA
+	BUT_ONLY
+END
+
+//读取luabbr.2da中abbrev列，确定高阶技能列表的名称（Fi0等）
+COPY_EXISTING ~luabbr.2da~ ~override~
+	COUNT_2DA_ROWS 2 kitsmax
+	FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 0 2 kitname
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~WIZARD_SLAYER~ THEN BEGIN
+			READ_2DA_ENTRY kitrow 1 2 wsabbrev
+			PATCH_IF ~%wsabbrev%~ STRING_EQUAL_CASE ~Fi0~ THEN BEGIN	//没有单独高阶技能表格
+				PATCH_IF FILE_CONTAINS_EVALUATED (~luabbr.2da~ ~Fi3~) THEN BEGIN	//Fi3已经被占用了
+					FOR (index = 5 ; index < 10 ; ++index) BEGIN
+						PATCH_IF NOT FILE_CONTAINS_EVALUATED (~luabbr.2da~ ~Fi%index%~) THEN BEGIN	//找一个没被占用的
+							SPRINT wsabbrev ~Fi%index%~
+							SET "index" = 10 // kills loop
+						END
+					END
+					PATCH_IF index <10  THEN BEGIN	//什么鬼，5-9全占了，下面几个总能选到一个吧
+						PATCH_FOR_EACH ~abbrevname~ IN ~Fib~ ~Fiw~ ~Fis~ ~Fsw~ ~Fws~ BEGIN
+							PATCH_IF NOT FILE_CONTAINS_EVALUATED (~luabbr.2da~ ~%abbrevname%~) THEN BEGIN
+								SPRINT wsabbrev ~%abbrevname%~
+							END
+						END
+					END
+				END ELSE BEGIN	//Fi3没被占用，就用它
+					SPRINT wsabbrev ~Fi3~
+				END
+				SET_2DA_ENTRY kitrow 1 2 ~%wsabbrev%~
+				INNER_ACTION BEGIN COPY_EXISTING_REGEXP ~LUFi0.2da~ ~override/LU%wsabbrev%.2da~ END
+			END
+		END
+	END
+BUT_ONLY
+
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~LU%wsabbrev%.2DA~ ~AP_SH#IWS1~) THEN BEGIN
+	COPY_EXISTING ~LU%wsabbrev%.2da~ ~override~
+		COUNT_2DA_ROWS ~9~ "rows"
+		SET "patch" = 0
+		FOR ( index = 1 ; index < rows ; index = index + 1 ) BEGIN
+			READ_2DA_ENTRY "%index%" 1 9 "abil"
+			PATCH_IF "%abil%" STRING_COMPARE_CASE "*" = 0 BEGIN	//遇到空行，加上新高阶
+				PATCH_IF (patch == 2) BEGIN
+					SET_2DA_ENTRY "%index%" 1 9 ~GA_SH#IWS3~
+					SET_2DA_ENTRY "%index%" 4 9 ~1~
+					SET_2DA_ENTRY "%index%" 5 9 ~99~
+					SET_2DA_ENTRY "%index%" 6 9 ~1~
+					SET_2DA_ENTRY "%index%" 7 9 ~GA_SH#IWS2~
+					SET "index" = "%rows%" + 1 // kills loop
+				END
+				PATCH_IF (patch == 1) BEGIN
+					SET_2DA_ENTRY "%index%" 1 9 ~GA_SH#IWS2~
+					SET_2DA_ENTRY "%index%" 4 9 ~1~
+					SET_2DA_ENTRY "%index%" 5 9 ~99~
+					SET_2DA_ENTRY "%index%" 6 9 ~20~
+					SET "patch" = 2
+				END
+				PATCH_IF (patch == 0) BEGIN
+					SET_2DA_ENTRY "%index%" 1 9 ~AP_SH#IWS1~
+					SET_2DA_ENTRY "%index%" 4 9 ~1~
+					SET_2DA_ENTRY "%index%" 5 9 ~99~
+					SET_2DA_ENTRY "%index%" 6 9 ~1~
+					SET "patch" = 1
+				END
+			END
+		END
+	BUT_ONLY
+END
+
+ADD_PROJECTILE ~%MOD_FOLDER%/improvedwizardslayer/pro/SH#IWS1.pro~
+ADD_PROJECTILE ~%MOD_FOLDER%/improvedwizardslayer/pro/SH#IWS2.pro~
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/eff/~ ~override~
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/noname/~ ~override~
+
+//杀手之威，被法师杀手接近到4呎范围内的敌方施法者需要每轮对死亡进行豁免检定，失败则在本轮内遭受施法速度减少（1点+1点/6个法师杀手等级）、施法等级减少（1点/2个法师杀手等级）的惩罚。法师杀手每提升4个等级都会使检定难度提升1点（初始以+4有利进行检定）。
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS0B.spl~ ~override~
+WRITE_SHORT   0x98 ~%SH#IWS1%~
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS0C.spl~ ~override~
+LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@251) END	//遭法师杀手压制
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS1.spl~ ~override~
+SAY NAME1 @231
+SAY UNIDENTIFIED_DESC @241
+//威名远播：传奇法师杀手的威名震动费伦大陆的每一个奥术使用者。敌对施法者被法师杀手影响施法速度和施法等级的有效距离扩展到30呎。
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS2.spl~ ~override~
+SAY NAME1 @232
+SAY UNIDENTIFIED_DESC @242
+//绝对防护：传奇法师杀手能够激发出潜力以短暂保护自身的有益状态不受魔法的驱离。这个能力让法师杀手在一轮时间内免受任何防护系和破魔系法术的影响，包括解除魔法、破解术、降低抗力等等。
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS3.spl~ ~override~
+SAY NAME1 @233
+SAY UNIDENTIFIED_DESC @243
+//禁魔领域：传奇法师杀手能够在一天内收集所有能干扰到法术的因子，并将其一次性释放出来。这个能力使法师杀手附近变成死魔法区并持续1回合之久，在此期间无论敌友都无法施展法术，法术以外的技能则不会受到影响。
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS3A.spl~ ~override~
+WRITE_SHORT   0x98 ~%SH#IWS2%~
+
+BEGIN @202	//允许法师杀手正常使用药水
+REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~SH#IWS0.spl~ @212
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+	READ_SHORT 0x1c	itemtype
+	READ_BYTE 0x18 itemflags
+	READ_BYTE 0x1f classusef
+	READ_BYTE 0x20 classusem
+	READ_BYTE 0x2f kituse
+	PATCH_IF itemtype == 9 BEGIN	// 药水
+		PATCH_IF ( (itemflags & 0b00000100) = 0b00000100 ) && ( (classusef & 0b11110111) = 0 ) && ( (kituse & 0b00000010) = 0b00000010 ) BEGIN	// 可移动，战士可用，法猎不可用
+			WRITE_BYTE 0x2f (kituse & 0b11111101)	//法猎可用
+		END
+	END
+BUT_ONLY
+
+BEGIN @203	//允许法师杀手正常使用护腕、腰带和斗篷，以及所有法师不能用但战士职业可用的物品
+REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~SH#IWS0.spl~ @212
+
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+	READ_SHORT 0x1c	itemtype
+	READ_BYTE 0x18 itemflags
+	READ_BYTE 0x1f classusef
+	READ_BYTE 0x20 classusem
+	READ_BYTE 0x2f kituse
+	PATCH_IF (itemtype == 3) OR (itemtype == 6) OR (itemtype == 32) OR ( (classusem & 0b00000100) = 0b00000100 ) BEGIN	// 护腕、腰带和斗篷，或者法师不可用
+		PATCH_IF ( (itemflags & 0b00000100) = 0b00000100 ) && ( (classusef & 0b11110111) = 0 ) && ( (kituse & 0b00000010) = 0b00000010 ) BEGIN	// 可移动，战士可用，法猎不可用
+			WRITE_BYTE 0x2f (kituse & 0b11111101)	//法猎可用
+		END
+	END
+BUT_ONLY
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// The Shaman_Hauler
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+BEGIN @301
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @320	//版本不对
+FORBID_COMPONENT "SETUP-shaman_hauler.tp2" "0" @321	//已经安装了旧版
+
+//SHAM#HL0.bam	空bam
+//SHAM#HLA.bam	萨满舞蹈图标
+//SHAM#HLB.bam	萨满舞蹈图标改
+//SHAM#HLC.bam	搬运图标
+//SHAM#HLD.bam	搬运图标改
+COPY ~%MOD_FOLDER%/shaman_hauler/bam~ ~override~
+
+//SHAM#HLA/B.cre	鸟，承载脚本
+COPY ~%MOD_FOLDER%/shaman_hauler/cre~ ~override~
+
+//SHAM#HL1.spl	萨满新增技能，给其他人加上技能SHAM#HL3
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL1.spl~ ~override~
+SAY NAME1 @302
+SAY UNIDENTIFIED_DESC @303
+
+//SHAM#HL2.spl	萨满新增高阶技能，给其他人加上技能SHAM#HL4
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL2.spl~ ~override~
+SAY NAME1 @304
+SAY UNIDENTIFIED_DESC @305
+
+//SHAM#HL3.spl	普通搬运，全局变量SHAM#HL1和局部变量SHAM#HLA变1，延迟6秒再SHAM#HL5.spl恢复此技能
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL3.spl~ ~override~
+SAY NAME1 @306
+SAY UNIDENTIFIED_DESC @307
+
+//SHAM#HL4.spl	传送搬运，延迟1秒传送自身，全局变量SHAM#HL2和局部变量SHAM#HLB变1，调用SHAM#HL6.spl
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL4.spl~ ~override~
+SAY NAME1 @308
+SAY UNIDENTIFIED_DESC @309
+
+//SHAM#HL5.spl	永久给SHAM#HL3.spl，局部变量SHAM#HLA归零
+//SHAM#HL6.spl	延迟6秒调用SHAM#HL9.spl，为了不和SHAM#HL4.spl一起被SHAM#HL7.spl移除
+//SHAM#HL7.spl	对全队人员移除SHAM#HL4.spl打断传送
+//SHAM#HL8.spl	局部变量归零
+//SHAM#HL9.spl	永久给SHAM#HL4.spl
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/noname~ ~override~
+
+//SHAM#HLA/B.baf	鸟的脚本
+COMPILE ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HLA.baf~
+COMPILE ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HLB.baf~
+
+//召唤生物在萨满被搬运出视线外的时候会跟着走
+EXTEND_TOP ~bdshunsu.BCS~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL0.baf~
+
+//全局脚本产生鸟
+COPY_EXISTING ~CAMPAIGN.2da~ ~override~
+	COUNT_2DA_ROWS 10 camprowmax	//至少10列column，row行数读入camprowmax
+	PATCH_IF camprowmax > 1 BEGIN
+		FOR (camprows = 1 ; camprows < camprowmax ; ++camprows) BEGIN
+			READ_2DA_ENTRY camprows 1 10 campscript	//WORLDSCRIPT名称
+			SET "%campscript%added" = 0
+		END
+		FOR (camprows = 1 ; camprows < camprowmax ; ++camprows) BEGIN
+			READ_2DA_ENTRY camprows 1 10 campscript	//WORLDSCRIPT名称
+				PATCH_IF "%campscript%added" = 0 BEGIN
+					INNER_ACTION BEGIN
+						EXTEND_TOP ~%campscript%.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
+					END
+					SET "%campscript%added" = 1
+				END
+		END
+	END ELSE BEGIN
+		INNER_ACTION BEGIN
+			EXTEND_TOP ~baldur.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
+			EXTEND_TOP ~baldur25.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
+		END
+	END
+BUT_ONLY
+
+//萨满升级获得技能
+APPEND ~CLABSH01.2da~ ~ABILITYS GA_SHAM#HL1 **** **** **** **** **** **** **** **** **** **** **** **** CDREPLACE~
+COPY_EXISTING ~CLABSH01.2da~ ~override~
+  COUNT_2DA_COLS cols
+  FOR (index = 15 ; index < cols ; ++index) BEGIN
+    REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
+  END
+  REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
+  PRETTY_PRINT_2DA
+
+//萨满高阶技能
+COPY_EXISTING ~lush0.2da~ ~override~
+  COUNT_2DA_ROWS ~9~ "rows"	//至少要9列。行数读入rows
+  SET "patch" = 0
+  FOR ( index = 1 ; index < rows ; index = index + 1 ) BEGIN
+    READ_2DA_ENTRY "%index%" 1 9 "abil"	//循环读取第二列每个值
+    PATCH_IF ("%abil%" STRING_COMPARE_CASE "*" = 0) BEGIN	//如果这一列是空的
+      PATCH_IF ("%patch%" = 0) BEGIN
+        SET_2DA_ENTRY "%index%" 1 9 ~GA_SHAM#HL2~
+        SET_2DA_ENTRY "%index%" 4 9 ~1~
+        SET_2DA_ENTRY "%index%" 5 9 ~99~
+        SET_2DA_ENTRY "%index%" 6 9 ~1~
+        SET "patch" = 1
+      END ELSE BEGIN
+        SET "index" = "%rows%" // kills loop
+      END
+    END
+  END
+BUT_ONLY
+
+
+BEGIN @322	//萨满召唤的生物可以控制
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @320	//版本不对
+
+COPY_EXISTING ~bdspirim.ITM~ ~override~  ~bdspnaim.ITM~ ~override~
+LPF DELETE_ITEM_EQEFFECT INT_VAR opcode_to_delete = 365 END
+
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// The Improved BeastMaster
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+BEGIN @401
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME ~BD1000.are~ @320
+
+//改变描述
+COPY_EXISTING ~KITLIST.2DA~ ~override~
+	COUNT_2DA_ROWS 9 kitsmax
+	FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+	READ_2DA_ENTRY kitrow 1 9 readkit
+		PATCH_IF ("%readkit%" STRING_COMPARE_CASE "BEASTMASTER" = 0) BEGIN
+		READ_2DA_ENTRY kitrow 5 9 bmability
+		READ_2DA_ENTRY kitrow 4 9 desc_strref
+            PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+				GET_STRREF desc_strref desc	//原描述文本
+				//PATCH_PRINT ~%desc%~
+				INNER_PATCH_SAVE newdesc ~%desc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @421
+					SPRINT adddesc  @422
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				//PATCH_PRINT ~%newdesc%~
+				INNER_ACTION BEGIN
+					STRING_SET_EVALUATE desc_strref ~%newdesc%~
+				END
+			END
+			//SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(~%desc%~)
+		END
+	END
+BUT_ONLY
+
+//处理技能列表
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%bmability%.2DA~ ~AP_SH#BMS0~) THEN BEGIN
+	APPEND ~%bmability%.2da~ ~ABILITYX AP_SH#BMS0 **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** CDREPLACE~
+	COPY_EXISTING ~%bmability%.2da~ ~override~
+		COUNT_2DA_COLS cols
+		FOR (index = 22 ; index < cols ; ++index) BEGIN
+			REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
+		END
+		REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
+		PRETTY_PRINT_2DA
+	BUT_ONLY
+END
+
+ADD_PROJECTILE ~%MOD_FOLDER%/improvedbeastmaster/pro/SH#BMS0.pro~
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SH#BMS0A.spl~ ~override~
+	WRITE_SHORT   0x98 ~%SH#BMS0%~
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/noname~ ~override~
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// Dual-classing Dragon Disciple
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+BEGIN @501
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME ~BD1000.are~ @320
+
+//需要记录：kit（含基础职业）名称对应字符串，用于对话显示；kit.ids中的数值或名称，用于AddKit()；同时还需要能分基础职业种类进行调用
+//kitlist.2da和kit.ids的宗派名称和数值严格对应，但没有基础职业描述。简单起见，基础职业不放入表格，仅读取kitlist.2da
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 9 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 1 9 kitname
+		READ_2DA_ENTRY kitrow 2 9 lowername
+		READ_2DA_ENTRY kitrow 8 9 classid
+		READ_2DA_ENTRY kitrow 9 9 kitidhex
+		SET kittemp = kitidhex + 1
+		SET kitid = kittemp - 1
+		PATCH_IF FILE_CONTAINS_EVALUATED (~kit.ids~ ~%kitname%~) BEGIN
+			PATCH_IF classid == 1 BEGIN SET $magekit(~%kitid%~) = lowername END
+			PATCH_IF classid == 2 BEGIN SET $fighterkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 3 BEGIN SET $clerickit(~%kitid%~) = lowername END
+			PATCH_IF classid == 4 BEGIN SET $thiefkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 5 BEGIN SET $bardkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 6 BEGIN SET $paladinkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 11 BEGIN SET $druidkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 12 BEGIN SET $rangerkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 19 BEGIN SET $sorcererkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 20 BEGIN SET $monkkit(~%kitid%~) = lowername END
+			PATCH_IF classid == 21 BEGIN SET $shamankit(~%kitid%~) = lowername END
+		END
+	END
+BUT_ONLY
+//COMPILE EVALUATE_BUFFER ~%MOD_FOLDER%/prestigedragondisciple/baf/ADD0.d~
+COPY ~%MOD_FOLDER%/prestigedragondisciple/dlg/ADD0.d~ ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~
+
+COPY ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~ ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~
+	PHP_EACH magekit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),MAGE) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),MAGE) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),MAGE) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH fighterkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),FIGHTER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),FIGHTER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),FIGHTER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH clerickit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),CLERIC) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),CLERIC) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),CLERIC) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH thiefkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),THIEF) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),THIEF) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),THIEF) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH bardkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),BARD) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),BARD) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),BARD) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH paladinkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),PALADIN) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),PALADIN) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),PALADIN) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH druidkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),DRUID) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),DRUID) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),DRUID) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH rangerkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),RANGER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),RANGER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),RANGER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH sorcererkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		PATCH_IF $sorcererkit(~%kitid%~) != 16419 BEGIN	//防止重复转职龙脉
+			REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),SORCERER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+			~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),SORCERER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),SORCERER) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+		END
+	END
+	PHP_EACH monkkit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),MONK) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),MONK) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),MONK) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+	PHP_EACH shamankit AS kitid => lowername BEGIN
+	//PATCH_PRINT ~%kitid% %lowername%~
+		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),SHAMAN) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
+		~~~~~IF ~~ THEN REPLY #%lowername% DO ~ChangeClass(LastSummonerOf(),SHAMAN) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(%kitid%)) SetGlobal("dualclassed","LOCALS",1)~ EXIT
+IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),SHAMAN) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
+	END
+
+COMPILE ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~
+COMPILE ~%MOD_FOLDER%/prestigedragondisciple/baf/SH#PDD0.baf~
+
+COPY ~%MOD_FOLDER%/prestigedragondisciple/spl/SH#PDD1.spl~ ~override~	//转职启动
+SAY NAME1 @503
+SAY UNIDENTIFIED_DESC @504
+
+COPY ~%MOD_FOLDER%/prestigedragondisciple/spl/noname~ ~override~
+COPY ~%MOD_FOLDER%/prestigedragondisciple/cre/noname~ ~override~
+
+//改变描述
+COPY_EXISTING ~KITLIST.2DA~ ~override~
+	COUNT_2DA_ROWS 9 kitsmax
+	FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+	READ_2DA_ENTRY kitrow 1 9 readkit
+		PATCH_IF ("%readkit%" STRING_COMPARE_CASE "DRAGON_DISCIPLE" = 0) BEGIN
+		READ_2DA_ENTRY kitrow 5 9 ddability
+		READ_2DA_ENTRY kitrow 4 9 desc_strref
+            PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+				GET_STRREF desc_strref desc	//原描述文本
+				//PATCH_PRINT ~%desc%~
+				INNER_PATCH_SAVE newdesc ~%desc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @505
+					SPRINT adddesc  @506
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				//PATCH_PRINT ~%newdesc%~
+				INNER_ACTION BEGIN
+					STRING_SET_EVALUATE desc_strref ~%newdesc%~
+				END
+			END
+			//SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(~%desc%~)
+		END
+	END
+BUT_ONLY
+
+//处理技能列表
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%ddability%.2DA~ ~GA_SH#PDD1~) THEN BEGIN
+	APPEND ~%ddability%.2da~ ~ABILITYX **** **** **** **** **** **** **** **** **** **** **** **** **** **** GA_SH#PDD1 **** **** **** **** **** CDREPLACE~
+	COPY_EXISTING ~%ddability%.2da~ ~override~
+		COUNT_2DA_COLS cols
+		FOR (index = 22 ; index < cols ; ++index) BEGIN
+			REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
+		END
+		REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
+		PRETTY_PRINT_2DA
+	BUT_ONLY
+END
+
+
+BEGIN @502	//龙脉术士的升级奖励改为与三版规则类似
+REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME ~BD1000.are~ @320
+
+//改变描述
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 9 kitsmax
+	FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+	READ_2DA_ENTRY kitrow 1 9 readkit
+		PATCH_IF ("%readkit%" STRING_COMPARE_CASE "DRAGON_DISCIPLE" = 0) BEGIN
+		READ_2DA_ENTRY kitrow 5 9 ddability
+		READ_2DA_ENTRY kitrow 4 9 desc_strref
+			PATCH_IF FILE_EXISTS_IN_GAME ~SH#PDD0.bcs~ BEGIN
+				PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+					INNER_ACTION BEGIN
+						STRING_SET_EVALUATE desc_strref @508
+					END
+				END ELSE BEGIN
+					SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(@508)
+				END
+			END ELSE BEGIN
+				PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+					INNER_ACTION BEGIN
+						STRING_SET_EVALUATE desc_strref @507
+					END
+				END ELSE BEGIN
+					SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(@507)
+				END
+			END
+		END
+	END
+BUT_ONLY
+/*
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 9 kitsmax
+	FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+	READ_2DA_ENTRY kitrow 1 9 readkit
+		PATCH_IF ("%readkit%" STRING_COMPARE_CASE "DRAGON_DISCIPLE" = 0) BEGIN
+		READ_2DA_ENTRY kitrow 5 9 ddability
+		READ_2DA_ENTRY kitrow 4 9 desc_strref
+            PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+				GET_STRREF desc_strref desc	//原描述文本
+				//PATCH_PRINT ~%desc%~
+				INNER_PATCH_SAVE newdesc ~%desc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @541
+					SPRINT adddesc  @542
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				INNER_PATCH_SAVE newdesc ~%newdesc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @543
+					SPRINT adddesc  @544
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				INNER_PATCH_SAVE newdesc ~%newdesc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @545
+					SPRINT adddesc  @546
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				INNER_PATCH_SAVE newdesc ~%newdesc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @547
+					SPRINT adddesc  @548
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				INNER_PATCH_SAVE newdesc ~%newdesc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @549
+					SPRINT adddesc  @550
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				INNER_PATCH_SAVE newdesc ~%newdesc%~ BEGIN	//新的描述文本
+					SPRINT matchdesc @551
+					SPRINT adddesc  @552
+					REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+				END
+				//PATCH_PRINT ~%newdesc%~
+				INNER_ACTION BEGIN
+					STRING_SET_EVALUATE desc_strref ~%newdesc%~
+				END
+			END
+			//SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(~%desc%~)
+		END
+	END
+BUT_ONLY
+*/
+
+//处理技能列表
+//SH#PDD1转职技能 SH#PDD2+10HP SH#PDD3+1力量 SH#PDD4+30HP SH#PDD5+1智力 SH#PDD6+2力量+1魅力+免疫
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%ddability%.2DA~ ~AP_SH#PDD6~) THEN BEGIN
+	APPEND ~%ddability%.2da~ ~ABILITYY **** **** **** AP_SH#PDD3 **** **** **** AP_SH#PDD3 **** AP_SH#PDD4 **** **** **** **** **** **** **** AP_SH#PDD5 **** AP_SH#PDD6 CDREPLACE~
+	COPY_EXISTING ~%ddability%.2da~ ~override~
+		COUNT_2DA_ROWS 20 rowmax
+		COUNT_2DA_COLS colmax
+		FOR (abrow = 1 ; abrow < rowmax + 1 ; ++abrow) BEGIN
+			PATCH_IF ( "%readability%" STRING_COMPARE_CASE ~AP_SPDD01~ = 0 ) BEGIN
+			PATCH_PRINT ~%abrow% %readability%~
+				SET_2DA_ENTRY abrow 5 20 ~****~	//删除5级的AC+1
+				SET abrow = rowmax + 2
+			END
+		END
+		FOR (abrow = 1 ; abrow < rowmax + 1 ; ++abrow) BEGIN
+			READ_2DA_ENTRY abrow 5 20 readability
+			PATCH_IF ( "%readability%" STRING_COMPARE_CASE ~AP_SPDD04~ = 0 ) BEGIN
+				SET_2DA_ENTRY abrow 5 20 ~AP_SH#PDD2~	//5级的体质+1改成最大HP+10
+				SET abrow = rowmax + 2
+			END
+		END
+		FOR (index = 22 ; index < colmax ; ++index) BEGIN
+			REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
+		END
+		REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
+		PRETTY_PRINT_2DA
+	BUT_ONLY
+END

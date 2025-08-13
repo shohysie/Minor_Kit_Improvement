@@ -1,0 +1,161 @@
+//生物在萨满被搬运的时候，往萨满移动
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLA")
+	TriggerOverride("SHAM#HLA",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player1)
+	Class(Player1,SHAMAN)
+	CheckSpellState(Player1,SHAMANIC_DANCE)
+	!See(Player1)
+THEN
+	RESPONSE #100
+		MoveToObject(Player1)
+END
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLB")
+	TriggerOverride("SHAM#HLB",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player1)
+	Class(Player1,SHAMAN)
+	CheckSpellState(Player1,SHAMANIC_DANCE)
+	!See(Player1)
+THEN
+	RESPONSE #100
+		JumpToObject(Player1)
+END
+
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLA")
+	TriggerOverride("SHAM#HLA",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player2)
+	Class(Player2,SHAMAN)
+	CheckSpellState(Player2,SHAMANIC_DANCE)
+	!See(Player2)
+THEN
+	RESPONSE #100
+		MoveToObject(Player2)
+END
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLB")
+	TriggerOverride("SHAM#HLB",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player2)
+	Class(Player2,SHAMAN)
+	CheckSpellState(Player2,SHAMANIC_DANCE)
+	!See(Player2)
+THEN
+	RESPONSE #100
+		JumpToObject(Player2)
+END
+
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLA")
+	TriggerOverride("SHAM#HLA",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player3)
+	Class(Player3,SHAMAN)
+	CheckSpellState(Player3,SHAMANIC_DANCE)
+	!See(Player3)
+THEN
+	RESPONSE #100
+		MoveToObject(Player3)
+END
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLB")
+	TriggerOverride("SHAM#HLB",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player3)
+	Class(Player3,SHAMAN)
+	CheckSpellState(Player3,SHAMANIC_DANCE)
+	!See(Player3)
+THEN
+	RESPONSE #100
+		JumpToObject(Player3)
+END
+
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLA")
+	TriggerOverride("SHAM#HLA",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player4)
+	Class(Player4,SHAMAN)
+	CheckSpellState(Player4,SHAMANIC_DANCE)
+	!See(Player4)
+THEN
+	RESPONSE #100
+		MoveToObject(Player4)
+END
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLB")
+	TriggerOverride("SHAM#HLB",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player4)
+	Class(Player4,SHAMAN)
+	CheckSpellState(Player4,SHAMANIC_DANCE)
+	!See(Player4)
+THEN
+	RESPONSE #100
+		JumpToObject(Player4)
+END
+
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLA")
+	TriggerOverride("SHAM#HLA",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player5)
+	Class(Player5,SHAMAN)
+	CheckSpellState(Player5,SHAMANIC_DANCE)
+	!See(Player5)
+THEN
+	RESPONSE #100
+		MoveToObject(Player5)
+END
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLB")
+	TriggerOverride("SHAM#HLB",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player5)
+	Class(Player5,SHAMAN)
+	CheckSpellState(Player5,SHAMANIC_DANCE)
+	!See(Player5)
+THEN
+	RESPONSE #100
+		JumpToObject(Player5)
+END
+
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLA")
+	TriggerOverride("SHAM#HLA",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player6)
+	Class(Player6,SHAMAN)
+	CheckSpellState(Player6,SHAMANIC_DANCE)
+	!See(Player6)
+THEN
+	RESPONSE #100
+		MoveToObject(Player6)
+END
+
+IF
+	ActionListEmpty()
+	InMyArea("SHAM#HLB")
+	TriggerOverride("SHAM#HLB",GlobalGT("shamanexist","Locals",0))
+	InMyArea(Player6)
+	Class(Player6,SHAMAN)
+	CheckSpellState(Player6,SHAMANIC_DANCE)
+	!See(Player6)
+THEN
+	RESPONSE #100
+		JumpToObject(Player6)
+END

@@ -1,0 +1,52 @@
+//处理无宗派武僧
+
+//非高阶技能
+APPEND ~CLABMO01.2da~ ~ABILITYA **** **** **** **** **** **** GA_IPMONK09 **** **** GA_IPMONK08 **** **** **** **** GA_IPMONK08 GA_IPMONK09 **** **** **** **** **** **** **** **** GA_IPMONK09 CDREPLACE
+ABILITYB GA_IPMONK0B **** **** GA_IPMONK10 **** **** GA_IPMONK10 **** **** GA_IPMONK10 GA_IPMONK07 **** **** **** GA_IPMONK0C GA_IPMONK07 **** **** **** **** GA_IPMONK0C **** **** **** **** CDREPLACE~
+COPY_EXISTING ~CLABMO01.2da~ ~override~
+  COUNT_2DA_COLS cols
+  FOR (index = 27; index < cols ; ++index) BEGIN
+	REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
+  END
+  REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
+  PRETTY_PRINT_2DA
+BUT_ONLY
+
+//高阶技能，共⑥种
+COPY_EXISTING ~LUMO0.2da~ ~override~
+	COUNT_2DA_ROWS ~9~ "rows"
+	SET "patch" = 0
+	SET "alreadyfixed" = 0									
+	FOR ( index = 1 ; index < rows ; index = index + 1 ) BEGIN
+	  READ_2DA_ENTRY "%index%" 1 9 "abil"
+	  PATCH_IF ("%abil%" STRING_COMPARE_CASE "GA_IPMONK01" = 0) BEGIN	//遇到改过的
+		SET "alreadyfixed" = 1	//这个文件已经改过啦
+	  END
+	  PATCH_IF ("%abil%" STRING_COMPARE_CASE "*" = 0) & ("%alreadyfixed%" = 0) BEGIN	//遇到空行
+		SET "patch" = "%patch%" + 1	//空行计数
+		PATCH_IF ("%patch%" <= 6) BEGIN
+			SET EVALUATE_BUFFER "emptyrow%patch%" = "%index%"	//记下前六个空行位置
+			//PATCH_PRINT "row%index% is empty"
+			//PATCH_PRINT "emptyrow%patch% is recorded"
+		END
+	  END
+	END
+	PATCH_IF ("%patch%" < 6) & ("%alreadyfixed%" = 0) BEGIN	//空行数不够，追加。缺6-"%patch%"行
+		SET "maxrows" = "%rows%" + 6 - "%patch%"
+		//PATCH_PRINT "required rows are 6-%patch%"
+		//PATCH_PRINT "add row at %rows% to less than %maxrows%"
+		FOR ( index =  "%rows%" ; index < "%maxrows%" ; index = index + 1 ) BEGIN
+			INSERT_2DA_ROW "%index%" 9 ~%index%         *          *          *          *          *          *           *            *           *                  ~
+			SET "patch" = "%patch%" + 1	//空行计数
+			SET EVALUATE_BUFFER "emptyrow%patch%" = "%index%"
+		END
+	END
+	PATCH_IF ("%alreadyfixed%" = 0) BEGIN
+		FOR ( patch = 1 ; patch < 7 ; patch = patch + 1 ) BEGIN
+			SET_2DA_ENTRY "emptyrow%patch%" 1 9 ~GA_IPMONK0%patch%~
+			SET_2DA_ENTRY "emptyrow%patch%" 4 9 ~1~
+			SET_2DA_ENTRY "emptyrow%patch%" 5 9 ~99~
+			SET_2DA_ENTRY "emptyrow%patch%" 6 9 ~20~
+		END
+	END
+BUT_ONLY

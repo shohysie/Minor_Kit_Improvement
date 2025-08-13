@@ -1,0 +1,545 @@
+//普通搬运，搬运工施法将全局变量SHAM#HL1设为1，局部变量SHAM#HLA设为1，如果萨满超15级需要脚本播放传送动画
+
+//传送到萨满身边，并判断萨满是否达到15级
+IF
+	OnCreation()
+	InMyArea(Player1)
+	Class(Player1,SHAMAN)
+	CheckSpellState(Player1,SHAMANIC_DANCE)
+	LevelLT(Player1,15)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",1)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player1)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player1)
+	Class(Player1,SHAMAN)
+	CheckSpellState(Player1,SHAMANIC_DANCE)
+	LevelGT(Player1,14)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",2)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player1)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player2)
+	Class(Player2,SHAMAN)
+	CheckSpellState(Player2,SHAMANIC_DANCE)
+	LevelLT(Player2,15)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",1)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player2)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player2)
+	Class(Player2,SHAMAN)
+	CheckSpellState(Player2,SHAMANIC_DANCE)
+	LevelGT(Player2,14)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",2)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player2)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player3)
+	Class(Player3,SHAMAN)
+	CheckSpellState(Player3,SHAMANIC_DANCE)
+	LevelLT(Player3,15)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",1)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player3)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player3)
+	Class(Player3,SHAMAN)
+	CheckSpellState(Player3,SHAMANIC_DANCE)
+	LevelGT(Player3,14)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",2)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player3)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player4)
+	Class(Player4,SHAMAN)
+	CheckSpellState(Player4,SHAMANIC_DANCE)
+	LevelLT(Player4,15)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",1)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player4)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player4)
+	Class(Player4,SHAMAN)
+	CheckSpellState(Player4,SHAMANIC_DANCE)
+	LevelGT(Player4,14)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",2)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player4)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player5)
+	Class(Player5,SHAMAN)
+	CheckSpellState(Player5,SHAMANIC_DANCE)
+	LevelLT(Player5,15)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",1)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player5)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player5)
+	Class(Player5,SHAMAN)
+	CheckSpellState(Player5,SHAMANIC_DANCE)
+	LevelGT(Player5,14)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",2)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player5)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player6)
+	Class(Player6,SHAMAN)
+	CheckSpellState(Player6,SHAMANIC_DANCE)
+	LevelLT(Player6,15)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",1)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player6)
+		SmallWait(1)
+END
+
+IF
+	OnCreation()
+	InMyArea(Player6)
+	Class(Player6,SHAMAN)
+	CheckSpellState(Player6,SHAMANIC_DANCE)
+	LevelGT(Player6,14)
+THEN
+	RESPONSE #100
+		SetGlobal("shamanexist","Locals",2)
+		SetGlobalTimer("existtime","Locals",6)
+		JumpToObject(Player6)
+		SmallWait(1)
+END
+
+//没有正在跳舞的萨满
+IF
+	Global("shamanexist","Locals",0)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@310)
+		DestroySelf()
+END
+
+//时间到，消失
+IF
+	GlobalTimerExpired("existtime","Locals")
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@313)
+		DestroySelf()
+END
+
+//萨满有15级，搬运工太远就直接移过来
+IF
+	Global("shamanexist","Locals",2)
+	InMyArea(Player1)
+	TriggerOverride(Player1,Global("SHAM#HLA","Locals",1))
+	!Range(Player1,7)
+THEN
+	RESPONSE #100
+		CreateVisualEffectObject("SPDIMNDR",Player1)
+		MoveGlobalObject(Player1,Myself)
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",2)
+	InMyArea(Player2)
+	TriggerOverride(Player2,Global("SHAM#HLA","Locals",1))
+	!Range(Player2,7)
+THEN
+	RESPONSE #100
+		CreateVisualEffectObject("SPDIMNDR",Player2)
+		MoveGlobalObject(Player2,Myself)
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",2)
+	InMyArea(Player3)
+	TriggerOverride(Player3,Global("SHAM#HLA","Locals",1))
+	!Range(Player3,7)
+THEN
+	RESPONSE #100
+		CreateVisualEffectObject("SPDIMNDR",Player3)
+		MoveGlobalObject(Player3,Myself)
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",2)
+	InMyArea(Player4)
+	TriggerOverride(Player4,Global("SHAM#HLA","Locals",1))
+	!Range(Player4,7)
+THEN
+	RESPONSE #100
+		CreateVisualEffectObject("SPDIMNDR",Player4)
+		MoveGlobalObject(Player4,Myself)
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",2)
+	InMyArea(Player5)
+	TriggerOverride(Player5,Global("SHAM#HLA","Locals",1))
+	!Range(Player5,7)
+THEN
+	RESPONSE #100
+		CreateVisualEffectObject("SPDIMNDR",Player5)
+		MoveGlobalObject(Player5,Myself)
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",2)
+	InMyArea(Player6)
+	TriggerOverride(Player6,Global("SHAM#HLA","Locals",1))
+	!Range(Player6,7)
+THEN
+	RESPONSE #100
+		CreateVisualEffectObject("SPDIMNDR",Player6)
+		MoveGlobalObject(Player6,Myself)
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+//萨满没15级，要判断初始搬运工有没有太远
+//距离够，开始搬运
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player1)
+	TriggerOverride(Player1,Global("SHAM#HLA","Locals",1))
+	Range(Player1,7)
+	CheckStatGT(Player1,15,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player2)
+	TriggerOverride(Player2,Global("SHAM#HLA","Locals",1))
+	Range(Player2,7)
+	CheckStatGT(Player2,15,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player3)
+	TriggerOverride(Player3,Global("SHAM#HLA","Locals",1))
+	Range(Player3,7)
+	CheckStatGT(Player3,15,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player4)
+	TriggerOverride(Player4,Global("SHAM#HLA","Locals",1))
+	Range(Player4,7)
+	CheckStatGT(Player4,15,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player5)
+	TriggerOverride(Player5,Global("SHAM#HLA","Locals",1))
+	Range(Player5,7)
+	CheckStatGT(Player5,15,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player6)
+	TriggerOverride(Player6,Global("SHAM#HLA","Locals",1))
+	Range(Player6,7)
+	CheckStatGT(Player6,15,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@312)
+		SetGlobal("shamanexist","Locals",3)
+END
+
+//太远1秒提示一次
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player1)
+	TriggerOverride(Player1,Global("SHAM#HLA","Locals",1))
+	OR(2)
+		!Range(Player1,7)
+		CheckStatLT(Player1,16,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@311)
+		Wait(1)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player2)
+	TriggerOverride(Player2,Global("SHAM#HLA","Locals",1))
+	OR(2)
+		!Range(Player2,7)
+		CheckStatLT(Player2,16,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@311)
+		Wait(1)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player3)
+	TriggerOverride(Player3,Global("SHAM#HLA","Locals",1))
+	OR(2)
+		!Range(Player3,7)
+		CheckStatLT(Player3,16,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@311)
+		Wait(1)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player4)
+	TriggerOverride(Player4,Global("SHAM#HLA","Locals",1))
+	OR(2)
+		!Range(Player4,7)
+		CheckStatLT(Player4,16,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@311)
+		Wait(1)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player5)
+	TriggerOverride(Player5,Global("SHAM#HLA","Locals",1))
+	OR(2)
+		!Range(Player5,7)
+		CheckStatLT(Player5,16,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@311)
+		Wait(1)
+END
+
+IF
+	Global("shamanexist","Locals",1)
+	InMyArea(Player6)
+	TriggerOverride(Player6,Global("SHAM#HLA","Locals",1))
+	OR(2)
+		!Range(Player6,7)
+		CheckStatLT(Player6,16,STR)
+THEN
+	RESPONSE #100
+		DisplayStringNoName(Myself,@311)
+		Wait(1)
+END
+
+//开始正常搬运，中途不脱落
+
+//移动到搬运工
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player1)
+	TriggerOverride(Player1,Global("SHAM#HLA","Locals",1))
+THEN
+	RESPONSE #100
+		JumpToObject(Player1)
+		Continue()
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player2)
+	TriggerOverride(Player2,Global("SHAM#HLA","Locals",1))
+THEN
+	RESPONSE #100
+		JumpToObject(Player2)
+		Continue()
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player3)
+	TriggerOverride(Player3,Global("SHAM#HLA","Locals",1))
+THEN
+	RESPONSE #100
+		JumpToObject(Player3)
+		Continue()
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player4)
+	TriggerOverride(Player4,Global("SHAM#HLA","Locals",1))
+THEN
+	RESPONSE #100
+		JumpToObject(Player4)
+		Continue()
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player5)
+	TriggerOverride(Player5,Global("SHAM#HLA","Locals",1))
+THEN
+	RESPONSE #100
+		JumpToObject(Player5)
+		Continue()
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player6)
+	TriggerOverride(Player6,Global("SHAM#HLA","Locals",1))
+THEN
+	RESPONSE #100
+		JumpToObject(Player6)
+		Continue()
+END
+
+//把萨满移动过来
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player1)
+	Class(Player1,SHAMAN)
+	CheckSpellState(Player1,SHAMANIC_DANCE)
+THEN
+	RESPONSE #100
+		MoveGlobalObject(Player1,Myself)
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player2)
+	Class(Player2,SHAMAN)
+	CheckSpellState(Player2,SHAMANIC_DANCE)
+THEN
+	RESPONSE #100
+		MoveGlobalObject(Player2,Myself)
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player3)
+	Class(Player3,SHAMAN)
+	CheckSpellState(Player3,SHAMANIC_DANCE)
+THEN
+	RESPONSE #100
+		MoveGlobalObject(Player3,Myself)
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player4)
+	Class(Player4,SHAMAN)
+	CheckSpellState(Player4,SHAMANIC_DANCE)
+THEN
+	RESPONSE #100
+		MoveGlobalObject(Player4,Myself)
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player5)
+	Class(Player5,SHAMAN)
+	CheckSpellState(Player5,SHAMANIC_DANCE)
+THEN
+	RESPONSE #100
+		MoveGlobalObject(Player5,Myself)
+END
+
+IF
+	Global("shamanexist","Locals",3)
+	InMyArea(Player6)
+	Class(Player6,SHAMAN)
+	CheckSpellState(Player6,SHAMANIC_DANCE)
+THEN
+	RESPONSE #100
+		MoveGlobalObject(Player6,Myself)
+END
+

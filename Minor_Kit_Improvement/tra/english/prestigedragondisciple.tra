@@ -1,0 +1,88 @@
+@503 = ~Equivalent Dragon Disciple Advancement~
+@504 = ~Transforms into specified class and kit at level 10. Resets XP to zero and removes original spellcasting abilities, while retaining passive benefits gained as a Dragon Disciple (AC bonus, Constitution, fire resistance, etc.)~
+@505 = ~^\(Advantages\)[: ]*$~
+@506 = ~Advantages:
+EQUIVALENT DRAGON DISCIPLE ADVANCEMENT：At level 15, gain one opportunity to convert to a specified class and kit. Level becomes 10, XP resets to zero, and original spellcasting is removed while keeping Dragon Disciple passive effects (AC, Constitution, fire resistance, etc.)~
+@507 = ~DRAGON DISCIPLE: Dragon Disciples are powerful Sorcerers with dragons' blood somewhere in their lineage. Their natural magical talents bring out their draconic heritage, allowing them to cast powerful magical spells and exhibit dragon-like abilities.
+
+Advantages:
+EQUIVALENT DRAGON DISCIPLE ADVANCEMENT：At level 15, gain one opportunity to convert to a specified class and kit. Level becomes 10, XP resets to zero, and original spellcasting is removed while keeping Dragon Disciple passive effects (AC, Constitution, fire resistance, etc.)
+– 1st level: +1 bonus to AC.
+– 3rd level: May use Breath Weapon once per day.
+
+BREATH WEAPON: The Dragon Disciple breathes a gout of flame up to 30 ft. long, inflicting 3d8 points of fire damage on all creatures caught within the 140-degree cone.
+
+– 4th level: Gains 25% innate Fire Resistance and +1 to strength.
+– 5th level: +1 bonus to AC and Constitution.
+– 6th level: Breath Weapon damage increases to 4d8.
+– 8th level: Innate Fire Resistance rises to 50%.
+– 9th level: Breath Weapon damage increases to 5d8.
+– 10th level: +1 bonus to AC.
+– 12th level: Breath Weapon damage increases to 6d8.
+– 12th level: Innate Fire Resistance rises to 75%.
+– 15th level: Breath Weapon damage increases to 7d8.
+– 15th level: +1 bonus to AC and Constitution.
+– 16th level: Innate Fire Resistance rises to 100%.
+– 18th level: Breath Weapon damage increases to 8d8.
+– 20th level: +1 bonus to AC.
+– Hit Die: d6
+
+Disadvantages:
+– May cast one fewer spell per level per day.~
+@508 = ~DRAGON DISCIPLE: Dragon Disciples are powerful Sorcerers with dragons' blood somewhere in their lineage. Their natural magical talents bring out their draconic heritage, allowing them to cast powerful magical spells and exhibit dragon-like abilities.
+
+Advantages:
+EQUIVALENT DRAGON DISCIPLE ADVANCEMENT：At level 15, gain one opportunity to convert to a specified class and kit. Level becomes 10, XP resets to zero, and original spellcasting is removed while keeping Dragon Disciple passive effects (AC, Constitution, fire resistance, etc.)
+– 1st level: +1 bonus to AC.
+– 3rd level: May use Breath Weapon once per day.
+
+BREATH WEAPON: The Dragon Disciple breathes a gout of flame up to 30 ft. long, inflicting 3d8 points of fire damage on all creatures caught within the 140-degree cone.
+
+– 4th level: Gains 25% Fire Resistance, +1 Strength
+– 5th level: Maximum HP increased (as if Hit Die upgraded to d8)
+– 6th level: Breath Weapon damage increases to 4d8
+– 8th level: Innate Fire Resistance increases to 50%, +1 Strength
+– 9th level: Breath Weapon damage increases to 5d8
+– 10th level: +1 bonus to AC, Maximum HP increased (as if Hit Die upgraded to d10)
+– 12th level: Breath Weapon damage increases to 6d8
+– 12th level: Innate Fire Resistance rises to 75%
+– 15th level: Breath Weapon damage increases to 7d8, AC +1 improvement, +1 Constitution
+– 16th level: Innate Fire Resistance increases to 100%
+– 18th level: Breath Weapon damage increases to 8d8, +1 Intelligence
+– 20th level: +1 bonus to AC, gains Darkvision, Immunity to Sleep and Paralysis, +2 Strength, +1 Charisma
+– Hit Die: d6
+
+Disadvantages:
+– May cast one fewer spell per level per day.~
+
+@510 = ~Select main class for reincarnation~
+
+@511 = ~Mage~
+@512 = ~Fighter~
+@513 = ~Cleric~
+@514 = ~Thief~
+@515 = ~Bard~
+@516 = ~Paladin~
+@517 = ~Druid~
+@518 = ~Ranger~
+@519 = ~Sorcerer~
+@520 = ~Monk~
+@521 = ~Shaman~
+
+@530 = ~Select specialization kit~
+@531 = ~Reselect main class~
+@532 = ~Base Class (No Kit)~
+@533 = ~I don't need reincarnation yet.~
+
+@541 = ~^\([ %TAB%]*–[ %TAB%]*4[ %TAB%]*\)级[:：].+$~
+@542 = ~\1级：获得25%火焰伤害抗性，力量+1~
+@543 = ~^\([ %TAB%]*–[ %TAB%]*5[ %TAB%]*\)级[:：].+$~
+@544 = ~\1级：最大HP提升（如同生命骰增加为D8）~
+@545 = ~^\([ %TAB%]*–[ %TAB%]*8[ %TAB%]*\)级[:：]*.+$~
+@546 = ~\1级：火焰伤害抗性增加到50%，力量+1~
+@547 = ~^\([ %TAB%]*–[ %TAB%]*10[ %TAB%]*\)级[:：].+$~
+@548 = ~\1级：防御等级+1改善，最大HP提升（如同生命骰增加为D10）~
+@549 = ~^\([ %TAB%]*–[ %TAB%]*18[ %TAB%]*\)级[:：].+$~
+@550 = ~\1级：龙息武器伤害增加到8D8，智力+1~
+@551 = ~^\([ %TAB%]*–[ %TAB%]*20[ %TAB%]*\)级[:：].+$~
+@552 = ~\1级：AC+1改善，获得黑暗视觉，免疫睡眠、麻痹，力量+2，魅力+1。~
