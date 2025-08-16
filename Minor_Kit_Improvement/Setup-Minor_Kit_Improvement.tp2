@@ -589,9 +589,14 @@ COPY_EXISTING ~CAMPAIGN.2da~ ~override~
 					SET "%campscript%added" = 1
 				END
 		END
-	END ELSE BEGIN
+	END
+	PATCH_IF FILE_EXISTS_IN_GAME ~baldur.bcs~ BEGIN
 		INNER_ACTION BEGIN
 			EXTEND_TOP ~baldur.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
+		END
+	END
+	PATCH_IF FILE_EXISTS_IN_GAME ~baldur25.bcs~ BEGIN
+		INNER_ACTION BEGIN
 			EXTEND_TOP ~baldur25.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
 		END
 	END
