@@ -1,0 +1,191 @@
+@611 = ~Drunken Master~
+@612 = ~Drunken Master: A monk who practices the Eight Drunken Immortals style elevates drunkenness to an art form. With a swaying body and stumbling steps, they may appear even foolishly comical; but behind every stagger and lurch lies solid fundamentals and a meticulously choreographed dance of blocks, parries, advances, retreats, attacks, and defenses. Such a monk does not merely treat fine wine as a vice, but as a weapon, a shield, and a medium to channel inner power.
+'Wine is good, but too much harms the body. Three parts drunk is best.'
+
+Features:
+
+- Playful Wanderer of the Mortal Realm: The Drunken Master has no connection to the traditional monastic disciplines and monastery life of ordinary monks. They often wander the rivers and lakes, the markets and alleys, preferring to act on whims and impulses. Thus, they tend to be of Neutral or even Chaotic alignment.
+(When selecting the wine flask, alignment may shift to Neutral or Chaotic.)
+- Ever-Present Wine Flask: A Drunken Master always carries a wine flask, filled with his favorite brew. He is intimately familiar with this wine and can precisely control each sip to achieve a precise level of intoxication.
+(Initially, must choose the flask's placement. May reselect its placement upon reaching legendary status.)
+(After the first sip, can use either 'Lü Dongbin, Drunken Lift That Crushes with Divine' or 'Li Tieguai, Spinning Heel That Drinks the Sky' attack modes.)
+(After the second sip, can use either 'Zhongli Quan, Drunken Ram That Breaks the Iron Fan' or 'Zhang Guolao, Cup-Tossed Kicks That Flow' attack modes.)
+(After the third sip, can use either 'Han Xiangzi, Flute-Hand Strike That Makes the Foe Dizzy' or 'Lan Caihe, Single Toast That Makes the Waist-Breaking Strike' attack modes.)
+(Attack modes remain active in combat until no enemies are in sight for four consecutive rounds.)
+(After the fifth sip, reaching 'five parts drunk,' the character truly becomes intoxicated, displaying a drunk icon and suffering penalties. Further drinking worsens effects. Ten sips is the limit; drinking more yields no additional changes.)
+(Drunkenness lasts until rest or travel. Buying wine at a tavern is equally effective, but the intoxication gained per drink is influenced by Constitution.)
+(Digesting alcohol takes time; most abilities fueled by wine typically activate on the round *after* drinking.)
+- Fortune in the Cups: Even in a tipsy state, the Drunken Master often stumbles into good luck, though this fortune rarely catches up with the troubles brought by overindulgence. This ability grants the Drunken Master a starting +1 Luck bonus, but it is insufficient to offset the penalties of heavy intoxication.
+- Surging Wine Power: After drinking, the Drunken Master's strength surges, while his perception dulls and his speech and actions become harder to control. After the first sip: Strength +1, Intelligence -1. After the second sip: Dexterity +1, Wisdom -1. After the third sip: Constitution +1 (or if Constitution is already 16, increases maximum HP by 10%), Charisma -1. These attribute changes last until sober. After reaching 12th level, all attribute changes increase to 2 points (maximum HP increase up to 20%).
+- Stumbling Drunken Steps: The Drunken Master's steps are crooked and unsteady, yet conceal a pattern elusive to grasp, making it difficult for blades and even magic to touch his robes. After drinking, the Drunken Master gains a +2 AC bonus against all weapon types and immunity to some movement-impairing effects, including Haste, Slow, and Hold. He also gains an additional success chance against effects like Grease, Entangle, and Web.
+- Liquid Courage: Fortified by wine, the Drunken Master's bravery swells, allowing him to resist most external mental attacks, including Fear, Charm, Rage, and Confusion.
+- Soothing Channels: The Drunken Master can spend a full round channeling the wine's power within to mend wounds, reducing his drunkenness by one level. At 1st level, this is equivalent to Cure Light Wounds. At 4th level, it improves to Cure Moderate Wounds and neutralize poison. At 8th level, it improves to Cure Serious Wounds and neutralize poison/disease. At 12th level, it improves to Cure Critical Wounds and neutralize poison/disease/deafness/silence/blindness. While using this technique, The Drunken Master temporarily suppresses the effects of any poison to prevent it from spreading through his body with the wine's flow.
+- Fiery Breath: The Drunken Master quickly holds a mouthful of strong liquor, ignites it, and exhales, dealing 1d6 fire damage per 2 levels (max 10d6) in an 8-ft radius cone. This technique consumes only a small amount of vigor and can be used five times per day.
+- Unleashed Wine Power (High-Level Skill): The Drunken Master's control over wine reaches a new realm. Each sip now unlocks greater potential but distances reason further, increasing the attribute changes from drinking to 3 points.
+- Eight Immortals Feast (High-Level Skill): The Drunken Master masters the most difficult and powerful technique of the Eight Drunken Immortals style. After the fourth sip, he can freely use either 'Cao Guojiu, Immortal’s Toast That Seals the Throat' or 'He Xiangu, Swaying Waist That Dances Through the Blue' attack modes.
+- Accustomed Drunken Body (High-Level Skill): Years of drinking allow The Drunken Master's body to gradually adapt to functioning while heavily intoxicated. After becoming truly drunk (five parts), each additional level of drunkenness grants +1 Luck (max +5), though still insufficient to offset the penalties of deep intoxication.
+- Liquor's Numbness (High-Level Skill): At a certain level of drunkenness, The Drunken Master's body becomes numb to pain. After the fourth sip, he gains 50% resistance to all damage for 2 rounds. Continued drinking can maintain this effect, but one must mind the penalties of drunkenness. This effect cannot be triggered at ten parts drunk.
+- Blunder into Technique (High-Level Skill): If the Drunken Master critically fails an attack, he does so in a classic display of physical comedy. The target must save vs. Spell (DC increases by 1 per 10 Drunken Master levels) or fall down laughing for 1d3 rounds. This has no effect on non-living targets, and alien creatures receive a +4 bonus to their save due to difficulty understanding the humor.
+- Clarity in the Cup (High-Level Skill): The Drunken Master achieves a balance between drunkenness and sobriety, making him even more fearsome. He can now benefit from all positive effects of 'Liquid Courage' and 'Stumbling Drunken Steps' without needing to drink.
+- Whale's Draught (High-Level Skill): The Drunken Master throws his head back and guzzles, consuming a large amount of wine in a short time. He can spend a full round to gain the effects of four sips at once, but moving or being attacked during the process interrupts the ability.
+- Drunken Frenzy (Requires Drunkenness): In the depths of intoxication, The Drunken Master lets instinct drive his body, becoming a chaotic whirlwind. This skill doubles his attacks per round, and any once-per-round special effects from his attack modes also occur twice per round. This skill requires a drunkenness bonus; it has no effect when sober. After becoming truly drunk (five parts), each level of drunkenness adds 1 round to its duration (max 6 rounds).
+- Drunken Chaos (Requires Drunkenness): The Drunken Master excels at charging into the heart of battle and using unexpected attacks to create confusion. Upon activation, all enemies within 8 feet must save vs. Breath or be randomly afflicted with one or more conditions (Confusion, Poison, Deafness, Slow, etc.) for 2 rounds. This skill requires a drunkenness bonus; it has no effect when sober. After becoming truly drunk (five parts), each level of drunkenness adds +2 to the save DC (max +10).
+
+Disadvantages:
+
+- Loses the standard monk's Magic Resistance.
+- Loses the standard monk's Movement Speed bonus and Free Action effect.
+- Loses the standard monk's immunity to Poison, Disease, Charm, and non-magical weapons.
+- Cannot use 'Stunning Fist,' 'Quivering Palm,' or the standard monk's high-level skills.
+
+Detailed Attack Mode Descriptions:
+
+Lü Dongbin, Drunken Lift That Crushes with Divine
+- Leads with a sword-finger thrust, then smashes with elbow and backhand fist, like a drunken sword-immortal lifting a wine pot to strike.
+- In this mode, the Drunken Master's melee damage increases by 1 point +1 point per 4 levels.
+
+Li Tieguai, Spinning Heel That Drinks the Sky
+- Sinks and spins, chaining knee strikes and sweeping leg attacks, like a cripple attacking the lower body with an iron crutch.
+- In this mode, enemies hit by The Drunken Master suffer a -2 AC penalty for 2 seconds (non-stacking). If they fail a save vs. Breath, they are tripped and suffer an additional -4 AC penalty for 2 seconds.
+- A 1st-level Drunken Master allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels. Enemies without feet or of Large size or larger cannot be tripped.
+
+Zhongli Quan, Drunken Ram That Breaks the Iron Fan
+- Stumbles forward, striking with head or shoulder, using just the right amount of force to maintain balance, like embracing a wine jar with both hands and exerting force without breaking it.
+- In this mode, once per round, one of The Drunken Master's attacks has a bull rush effect, dealing an additional 1d4/2 levels (max 10d4) crushing damage and knocking the enemy back. If the enemy fails a save vs. Death, they are knocked prone and unconscious for 1 round.
+- A 1st-level Drunken Master allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels.
+
+Zhang Guolao, Cup-Tossed Kicks That Flow
+- Uses hands to support the body while spinning to launch a chain of kicks, like a drunkard rolling on the ground.
+- In this mode, a successful melee hit by The Drunken Master grants him +1 attack the following round (does not stack).
+
+Han Xiangzi, Flute-Hand Strike That Makes the Foe Dizzy
+- Seizes the opponent's wrist and strikes their chest/abdomen. Quickly holds wine in the mouth and, as the target instinctively gasps from the blow, sprays it onto their face, forcing them to choke and inhale the liquor.
+- In this mode, once per round, The Drunken Master attempts a Grapple (ignoring AC and spell protections) against the nearest enemy, blinding them for 2 rounds (can be avoided with a save vs. Breath at -2 penalty) and increasing their intoxication by three levels. An enemy sprayed twice becomes drunk and suffers a -4 penalty to rolls; a third spray inflicts a -10 penalty.
+- Non-living enemies are unaffected by the spray.
+
+Lan Caihe, Single Toast That Makes the Waist-Breaking Strike
+- Dives beneath or behind the enemy to launch a surprise attack, then seizes the opportunity to lift them by the waist and slam them down, like lifting a flower basket.
+- In this mode, once per round, The Drunken Master attempts a Grapple (ignoring AC and spell protections) against the nearest enemy and slams them prone, dealing 1d6/2 levels (max 10d6) bludgeoning damage. If the enemy fails a save vs. Death, they are unconscious for 2 rounds.
+- A 1st-level ArDrunken Masterhat allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels. Enemies of Large size or larger cannot be slammed prone.
+
+Cao Guojiu, Immortal’s Toast That Seals the Throat
+- Fingers hook like holding a wine cup, strikes out as if offering a toast to lock the enemy's throat. A sudden exertion of force can be fatal.
+- In this mode, once per round, one of The Drunken Master's attacks has a Death effect. If the enemy fails a save vs. Breath, they die instantly.
+- A 1st-level Drunken Master allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels. Non-living enemies are unaffected.
+
+He Xiangu, Swaying Waist That Dances Through the Blue
+- Controls distance with drunken steps, twists the waist to evade enemy attacks while storing force for a rebound, suddenly counterattacking upon spinning back.
+- In this mode, the Drunken Master gains a +4 bonus to hit and has a 50% chance to avoid all physical attacks and damaging/disablement spells.
+
+Note:
+Due to engine limitations, even if sufficiently drunk from tavern wine, 'Liquor's Numbness' must be activated via the personal wine flask. However, this skill does not require waiting a round; it takes effect immediately upon drinking.~
+
+@613 = ~Drunk~
+@614 = ~Heavily Drunk~
+@615 = ~Spray Wine~
+@616 = ~Blinded~
+@617 = ~Grappling Slam~
+@618 = ~Throat Lock~
+@619 = ~Gulp!~
+
+@621 = ~Ever-Present Wine Flask~
+@622 = ~A Drunken Master always carries a wine flask, filled with his favorite brew. He is intimately familiar with this wine and can precisely control each sip to achieve a precise level of intoxication.~
+@623 = ~Flask Placement~
+@624 = ~Flask Placement:
+Choose where to place the wine flask. It can occupy a quick item slot (cannot be moved afterward), or you can ignore the physical flask and treat Drinking as a skill.~
+@625 = ~Place in quick item slot. May require dropping other equipment manually. Cannot be moved after placement. Avoid character leaving the party, or it will appear in the protagonist's inventory.~
+@626 = ~Ignore the physical flask, treat Drinking as a skill. Does not occupy inventory but may be interrupted while drinking.~
+@627 = ~Shift alignment?~
+@628 = ~Shift to Neutral alignment.~
+@629 = ~Shift to Chaotic alignment.~
+@630 = ~No shift needed.~
+
+@631 = ~Lü Dongbin, Drunken Lift That Crushes with Divine~
+@632 = ~Leads with a sword-finger thrust, then smashes with elbow and backhand fist, like a drunken swordsman lifting a wine pot to strike.
+In this mode, the Drunken Master's melee damage increases by 1 point +1 point per 4 levels.~
+@633 = ~Li Tieguai, Spinning Heel That Drinks the Sky~
+@634 = ~Sinks and spins, chaining knee strikes and sweeping leg attacks, like a cripple attacking the lower body with an iron crutch.
+In this mode, enemies hit by The Drunken Master suffer a -2 AC penalty for 2 seconds (non-stacking). If they fail a save vs. Breath, they are tripped and suffer an additional -4 AC penalty for 2 seconds.
+A 1st-level Drunken Master allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels. Enemies without feet or of Large size or larger cannot be tripped.~
+@635 = ~Zhongli Quan, Drunken Ram That Breaks the Iron Fan~
+@636 = ~Stumbles forward, striking with head or shoulder, using just the right amount of force to maintain balance, like embracing a wine jar with both hands and exerting force without breaking it.
+In this mode, once per round, one of The Drunken Master's attacks has a bull rush effect, dealing an additional 1d4/2 levels (max 10d4) crushing damage and knocking the enemy back. If the enemy fails a save vs. Death, they are knocked prone and unconscious for 1 round.
+A 1st-level Drunken Master allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels.~
+@637 = ~Zhang Guolao, Cup-Tossed Kicks That Flow~
+@638 = ~Uses hands to support the body while spinning to launch a chain of kicks, like a drunkard rolling on the ground.
+In this mode, a successful melee hit by The Drunken Master grants him +1 attack the following round (does not stack).~
+@639 = ~Han Xiangzi, Flute-Hand Strike That Makes the Foe Dizzy~
+@640 = ~Seizes the opponent's wrist and strikes their chest/abdomen. Quickly holds wine in the mouth and, as the target instinctively gasps from the blow, sprays it onto their face, forcing them to choke and inhale the liquor.
+In this mode, once per round, The Drunken Master attempts a Grapple (ignoring AC and spell protections) against the nearest enemy, blinding them for 2 rounds (can be avoided with a save vs. Breath at -2 penalty) and increasing their intoxication by three levels. An enemy sprayed twice becomes drunk and suffers a -4 penalty to rolls; a third spray inflicts a -10 penalty.
+Non-living enemies are unaffected by the spray.~
+@641 = ~Lan Caihe, Single Toast That Makes the Waist-Breaking Strike~
+@642 = ~Dives beneath or behind the enemy to launch a surprise attack, then seizes the opportunity to lift them by the waist and slam them down, like lifting a flower basket.
+In this mode, once per round, The Drunken Master attempts a Grapple (ignoring AC and spell protections) against the nearest enemy and slams them prone, dealing 1d6/2 levels (max 10d6) bludgeoning damage. If the enemy fails a save vs. Death, they are unconscious for 2 rounds.
+A 1st-level Drunken Master allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels. Enemies of Large size or larger cannot be slammed prone.~
+@643 = ~Cao Guojiu, Immortal’s Toast That Seals the Throat~
+@644 = ~Fingers hook like holding a wine cup, strikes out as if offering a toast to lock the enemy's throat. A sudden exertion of force can be fatal.
+In this mode, once per round, one of The Drunken Master's attacks has a Death effect. If the enemy fails a save vs. Breath, they die instantly.
+A 1st-level Drunken Master allows enemies a +6 bonus to the save. The save DC increases by 1 per 4 character levels. Non-living enemies are unaffected.~
+@645 = ~He Xiangu, Swaying Waist That Dances Through the Blue~
+@646 = ~Controls distance with drunken steps, twists the waist to evade enemy attacks while storing force for a rebound, suddenly counterattacking upon spinning back.
+In this mode, the Drunken Master gains a +4 bonus to hit and has a 50% chance to avoid all physical attacks and damaging/disablement spells.~
+
+@651 = ~Soothing Channels~
+@652 = ~The Drunken Master can spend a full round channeling the wine's power within to mend wounds, reducing his drunkenness by one level.
+At 1st level, this is equivalent to Cure Light Wounds. At 4th level, it improves to Cure Moderate Wounds and neutralize poison. At 8th level, it improves to Cure Serious Wounds and neutralize poison/disease. At 12th level, it improves to Cure Critical Wounds and neutralize poison/disease/deafness/silence/blindness.
+While using this technique, The Drunken Master temporarily suppresses the effects of any poison to prevent it from spreading through his body with the wine's flow.~
+@653 = ~Fiery Breath~
+@654 = ~Fiery Breath: The Drunken Master quickly holds a mouthful of strong liquor, ignites it, and exhales, dealing 1d6 fire damage per 2 levels (max 10d6) in a cone.~
+
+@661 = ~Unleashed Wine Power~
+@662 = ~Unleashed Wine Power:
+The Drunken Master's control over wine reaches a new realm. Each sip now unlocks greater potential but distances reason further, increasing the attribute changes from drinking to 3 points.~
+@663 = ~Eight Immortals Feast~
+@664 = ~Eight Immortals Feast:
+The Drunken Master masters the most difficult and powerful technique of the Eight Drunken Immortals style. After the fourth sip, he can freely use either 'Cao Guojiu, Immortal's Toast, Throat-Locking Grip' or 'He Xiangu, Spring-Waist Offering Wine, Drunken Swaying Steps' attack modes, offering a once-per-round death attack or a chance to avoid enemy attacks, respectively.~
+@665 = ~Accustomed Drunken Body~
+@666 = ~Accustomed Drunken Body:
+Years of drinking allow The Drunken Master's body to gradually adapt to functioning while heavily intoxicated. After becoming truly drunk (five parts), each additional level of drunkenness grants +1 Luck (max +5), though still insufficient to offset the penalties of deep intoxication.~
+@667 = ~Liquor's Numbness~
+@668 = ~Liquor's Numbness:
+At a certain level of drunkenness, The Drunken Master's body becomes numb to pain. After the fourth sip, he gains 50% resistance to all damage for 2 rounds. Continued drinking can maintain this effect, but one must mind the penalties of drunkenness. This effect cannot be triggered at ten parts drunk.~
+@669 = ~Blunder into Technique~
+@670 = ~Blunder into Technique:
+If the Drunken Master critically fails an attack, he does so in a classic display of physical comedy. The target must save vs. Spell (DC increases by 1 per 10 Drunken Master levels) or fall down laughing for 1d3 rounds.
+This has no effect on non-living targets, and alien creatures receive a +4 bonus to their save due to difficulty understanding the humor.~
+@671 = ~Clarity in the Cup~
+@672 = ~Clarity in the Cup:
+The Drunken Master achieves a balance between drunkenness and sobriety, making him even more fearsome. He can now benefit from all positive effects of 'Liquid Courage' and 'Stumbling Drunken Steps' without needing to drink.~
+@673 = ~Whale's Draught~
+@674 = ~Whale's Draught:
+The Drunken Master throws his head back and guzzles, consuming a large amount of wine in a short time. He can spend a full round to gain the effects of four sips at once, but moving or being attacked during the process interrupts the ability.~
+@675 = ~Drunken Frenzy~
+@676 = ~Drunken Frenzy:
+In the depths of intoxication, The Drunken Master lets instinct drive his body, becoming a chaotic whirlwind. This skill doubles his attacks per round, and any once-per-round special effects from his attack modes also occur twice per round.
+This skill requires a drunkenness bonus; it has no effect when sober. After becoming truly drunk (five parts), each level of drunkenness adds 1 round to its duration.~
+@677 = ~Drunken Chaos~
+@678 = ~Drunken Chaos:
+The Drunken Master excels at charging into the heart of battle and using unexpected attacks to create confusion. Upon activation, all enemies within 8 feet must save vs. Breath or be randomly afflicted with one or more conditions (Confusion, Poison, Deafness, Slow, etc.) for 2 rounds. This skill requires a drunkenness bonus; it has no effect when sober. After becoming truly drunk (five parts), each level of drunkenness adds +2 to the save DC (max +10).~
+
+@679 = ~Not drunk, cannot activate skill.~
+@680 = ~Whale's Draught interrupted.~
+
+@681 = ~One Part Drunk: Tipsy~
+@682 = ~Two Parts Drunk: Merry~
+@683 = ~Three Parts Drunk: Mellow~
+@684 = ~Four Parts Drunk: Buoyant~
+@685 = ~Five Parts Drunk: Plastered~
+@686 = ~Six Parts Drunk: Uninhibited~
+@687 = ~Seven Parts Drunk: Sottish~
+@688 = ~Eight Parts Drunk: Dead Drunk~
+@689 = ~Nine Parts Drunk: Soul-Departed~
+@690 = ~Ten Parts Drunk: Fully Saturated~
+
+@691 = ~Heh ha ha ha ha!~
+@692 = ~Ah ha ha ha ha ha!~
+@693 = ~Ha ha ha ha ha!!~
+@694 = ~Hmm aaah aaah aaah~
+@695 = ~Ha ha ha ha ah~
+@696 = ~Wa ha ha ha!~
+@697 = ~Heh heh... Ha ha ha!~
+@698 = ~Hmm hmm hmm heh heh heh ha ha ha ha ha!~

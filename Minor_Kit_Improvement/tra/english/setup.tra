@@ -5,6 +5,10 @@
 @105 = ~Work as a new kit, the Honed Monk~
 @106 = ~Allowing monks to use two-handed light weapons (staves and spears), supports monk kit MODs already installed. With disadvantage that attack animations are a little out of step~
 @107 = ~Allowing all bare-handed skills (e.g. Stunning Blow and Quivering Palm) of monks to be effective also on melee weapons. Supports monk kit MODs installed already~
+@195 = ~Allowing monks to become Specialized (2 slots) with allowed weapons~
+@196 = ~Allowing monks to become Grand Master (5 slots) with allowed weapons~
+@197 = ~Cannot install new kit because a kit with the same name already exists~
+@198 = ~Cannot install new kit because the kit code is already in use~
 @199 = ~Detected incompatible old version of Improve Monk, please uninstall it first~
 
 @201 = "Improved Wizard Slayer"
@@ -16,7 +20,7 @@
 
 @301 = "Shaman Hauler"
 @320 = "Unsupported game version"
-@322 = "Enables manual control of Shaman-summoned spirits"
+@322 = "Enables manual control of Shaman-summoned spirits for a certain degree, and the shaman can immediately stop dancing to perform other actions"
 @399 = "Detected incompatible old version of Shaman Hauler, please uninstall it first"
 
 @401 = "Improved Beastmaster"
@@ -24,4 +28,5 @@
 @501 = "Dragon Disciple Reincarnation (Transforms into specified class and kit, disables original spellcasting, retains passive draconic traits: AC bonuses, Constitution, fire resistance, etc.)"
 @502 = "Overhauls Dragon Disciple's passive progression rewards to align with 3rd Edition rules"
 
+@601 = "Drunken Master"
 

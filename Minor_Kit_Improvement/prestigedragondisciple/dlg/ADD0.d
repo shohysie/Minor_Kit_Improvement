@@ -1,6 +1,12 @@
-BEGIN ~SH#PDD0~
+BEGIN ~SY#IPD0~
 
-IF ~!GlobalGT("dualclassed","LOCALS",0)~ THEN BEGIN dualclass0
+IF ~!GlobalGT("dualclassed","LOCALS",0)~ THEN BEGIN reducelevel
+SAY @534	//确认扣除等级和经验进行转职？仅有一次机会且不可逆转
+IF ~~ THEN REPLY @533 DO ~DestroySelf()~ EXIT	//我现在还不需要转职。
+IF ~~ THEN REPLY @535 DO ~ReallyForceSpellRES("SY#IPD0",LastTalkedToBy())~ GOTO dualclass0 	//确认进行转职。
+END
+
+IF ~~ THEN BEGIN dualclass0
 SAY @510	//选择需要转职的主职业。
 IF ~~ THEN REPLY @511 GOTO dualtomage
 IF ~~ THEN REPLY @512 GOTO dualtofighter
@@ -13,7 +19,6 @@ IF ~~ THEN REPLY @518 GOTO dualtoranger
 IF ~~ THEN REPLY @519 GOTO dualtosorcerer
 IF ~~ THEN REPLY @520 GOTO dualtomonk
 IF ~~ THEN REPLY @521 GOTO dualtoshaman
-IF ~~ THEN REPLY @533 DO ~DestroySelf()~ EXIT	//我现在还不需要转职。
 END
 
 IF ~~ THEN BEGIN dualtomage

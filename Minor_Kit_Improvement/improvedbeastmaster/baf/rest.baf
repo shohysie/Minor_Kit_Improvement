@@ -1,0 +1,12 @@
+IF
+	PartyRested()
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMF","GLOBAL",0)
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("SY#IBMS","GLOBAL",0)
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("SY#IBMB","GLOBAL",0)
+		SetGlobal("SY#IBMW","GLOBAL",0)
+		Continue()
+END

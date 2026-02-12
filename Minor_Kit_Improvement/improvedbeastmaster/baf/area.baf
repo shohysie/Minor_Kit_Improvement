@@ -1,0 +1,468 @@
+IF
+	!Global("SY#IBMF","GLOBAL",0)
+	Exists("SY#IBMF")
+	!InActiveArea("SY#IBMF")
+	IsActive("SY#IBMF")
+	TriggerOverride("SY#IBMF",Global("mysummoner","LOCALS",1))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMF")
+		MoveGlobalObject("SY#IBMF",Player1)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMF","GLOBAL",0)
+	Exists("SY#IBMF")
+	!InActiveArea("SY#IBMF")
+	IsActive("SY#IBMF")
+	TriggerOverride("SY#IBMF",Global("mysummoner","LOCALS",2))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMF")
+		MoveGlobalObject("SY#IBMF",Player2)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMF","GLOBAL",0)
+	Exists("SY#IBMF")
+	!InActiveArea("SY#IBMF")
+	IsActive("SY#IBMF")
+	TriggerOverride("SY#IBMF",Global("mysummoner","LOCALS",3))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMF")
+		MoveGlobalObject("SY#IBMF",Player3)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMF","GLOBAL",0)
+	Exists("SY#IBMF")
+	!InActiveArea("SY#IBMF")
+	IsActive("SY#IBMF")
+	TriggerOverride("SY#IBMF",Global("mysummoner","LOCALS",4))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMF")
+		MoveGlobalObject("SY#IBMF",Player4)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMF","GLOBAL",0)
+	Exists("SY#IBMF")
+	!InActiveArea("SY#IBMF")
+	IsActive("SY#IBMF")
+	TriggerOverride("SY#IBMF",Global("mysummoner","LOCALS",5))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMF")
+		MoveGlobalObject("SY#IBMF",Player5)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMF","GLOBAL",0)
+	Exists("SY#IBMF")
+	!InActiveArea("SY#IBMF")
+	IsActive("SY#IBMF")
+	TriggerOverride("SY#IBMF",Global("mysummoner","LOCALS",6))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMF")
+		MoveGlobalObject("SY#IBMF",Player6)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMA","GLOBAL",0)
+	Exists("SY#IBMA")
+	!InActiveArea("SY#IBMA")
+	IsActive("SY#IBMA")
+	TriggerOverride("SY#IBMA",Global("mysummoner","LOCALS",1))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMA")
+		MoveGlobalObject("SY#IBMA",Player1)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMA","GLOBAL",0)
+	Exists("SY#IBMA")
+	!InActiveArea("SY#IBMA")
+	IsActive("SY#IBMA")
+	TriggerOverride("SY#IBMA",Global("mysummoner","LOCALS",2))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMA")
+		MoveGlobalObject("SY#IBMA",Player2)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMA","GLOBAL",0)
+	Exists("SY#IBMA")
+	!InActiveArea("SY#IBMA")
+	IsActive("SY#IBMA")
+	TriggerOverride("SY#IBMA",Global("mysummoner","LOCALS",3))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMA")
+		MoveGlobalObject("SY#IBMA",Player3)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMA","GLOBAL",0)
+	Exists("SY#IBMA")
+	!InActiveArea("SY#IBMA")
+	IsActive("SY#IBMA")
+	TriggerOverride("SY#IBMA",Global("mysummoner","LOCALS",4))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMA")
+		MoveGlobalObject("SY#IBMA",Player4)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMA","GLOBAL",0)
+	Exists("SY#IBMA")
+	!InActiveArea("SY#IBMA")
+	IsActive("SY#IBMA")
+	TriggerOverride("SY#IBMA",Global("mysummoner","LOCALS",5))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMA")
+		MoveGlobalObject("SY#IBMA",Player5)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMA","GLOBAL",0)
+	Exists("SY#IBMA")
+	!InActiveArea("SY#IBMA")
+	IsActive("SY#IBMA")
+	TriggerOverride("SY#IBMA",Global("mysummoner","LOCALS",6))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMA")
+		MoveGlobalObject("SY#IBMA",Player6)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMS","GLOBAL",0)
+	Exists("SY#IBMS")
+	!InActiveArea("SY#IBMS")
+	IsActive("SY#IBMS")
+	TriggerOverride("SY#IBMS",Global("mysummoner","LOCALS",1))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMS")
+		MoveGlobalObject("SY#IBMS",Player1)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMS","GLOBAL",0)
+	Exists("SY#IBMS")
+	!InActiveArea("SY#IBMS")
+	IsActive("SY#IBMS")
+	TriggerOverride("SY#IBMS",Global("mysummoner","LOCALS",2))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMS")
+		MoveGlobalObject("SY#IBMS",Player2)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMS","GLOBAL",0)
+	Exists("SY#IBMS")
+	!InActiveArea("SY#IBMS")
+	IsActive("SY#IBMS")
+	TriggerOverride("SY#IBMS",Global("mysummoner","LOCALS",3))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMS")
+		MoveGlobalObject("SY#IBMS",Player3)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMS","GLOBAL",0)
+	Exists("SY#IBMS")
+	!InActiveArea("SY#IBMS")
+	IsActive("SY#IBMS")
+	TriggerOverride("SY#IBMS",Global("mysummoner","LOCALS",4))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMS")
+		MoveGlobalObject("SY#IBMS",Player4)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMS","GLOBAL",0)
+	Exists("SY#IBMS")
+	!InActiveArea("SY#IBMS")
+	IsActive("SY#IBMS")
+	TriggerOverride("SY#IBMS",Global("mysummoner","LOCALS",5))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMS")
+		MoveGlobalObject("SY#IBMS",Player5)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMS","GLOBAL",0)
+	Exists("SY#IBMS")
+	!InActiveArea("SY#IBMS")
+	IsActive("SY#IBMS")
+	TriggerOverride("SY#IBMS",Global("mysummoner","LOCALS",6))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMS")
+		MoveGlobalObject("SY#IBMS",Player6)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMC","GLOBAL",0)
+	Exists("SY#IBMC")
+	!InActiveArea("SY#IBMC")
+	IsActive("SY#IBMC")
+	TriggerOverride("SY#IBMC",Global("mysummoner","LOCALS",1))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMC")
+		MoveGlobalObject("SY#IBMC",Player1)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMC","GLOBAL",0)
+	Exists("SY#IBMC")
+	!InActiveArea("SY#IBMC")
+	IsActive("SY#IBMC")
+	TriggerOverride("SY#IBMC",Global("mysummoner","LOCALS",2))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMC")
+		MoveGlobalObject("SY#IBMC",Player2)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMC","GLOBAL",0)
+	Exists("SY#IBMC")
+	!InActiveArea("SY#IBMC")
+	IsActive("SY#IBMC")
+	TriggerOverride("SY#IBMC",Global("mysummoner","LOCALS",3))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMC")
+		MoveGlobalObject("SY#IBMC",Player3)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMC","GLOBAL",0)
+	Exists("SY#IBMC")
+	!InActiveArea("SY#IBMC")
+	IsActive("SY#IBMC")
+	TriggerOverride("SY#IBMC",Global("mysummoner","LOCALS",4))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMC")
+		MoveGlobalObject("SY#IBMC",Player4)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMC","GLOBAL",0)
+	Exists("SY#IBMC")
+	!InActiveArea("SY#IBMC")
+	IsActive("SY#IBMC")
+	TriggerOverride("SY#IBMC",Global("mysummoner","LOCALS",5))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMC")
+		MoveGlobalObject("SY#IBMC",Player5)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMC","GLOBAL",0)
+	Exists("SY#IBMC")
+	!InActiveArea("SY#IBMC")
+	IsActive("SY#IBMC")
+	TriggerOverride("SY#IBMC",Global("mysummoner","LOCALS",6))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMC")
+		MoveGlobalObject("SY#IBMC",Player6)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMB","GLOBAL",0)
+	Exists("SY#IBMB")
+	!InActiveArea("SY#IBMB")
+	IsActive("SY#IBMB")
+	TriggerOverride("SY#IBMB",Global("mysummoner","LOCALS",1))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMB")
+		MoveGlobalObject("SY#IBMB",Player1)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMB","GLOBAL",0)
+	Exists("SY#IBMB")
+	!InActiveArea("SY#IBMB")
+	IsActive("SY#IBMB")
+	TriggerOverride("SY#IBMB",Global("mysummoner","LOCALS",2))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMB")
+		MoveGlobalObject("SY#IBMB",Player2)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMB","GLOBAL",0)
+	Exists("SY#IBMB")
+	!InActiveArea("SY#IBMB")
+	IsActive("SY#IBMB")
+	TriggerOverride("SY#IBMB",Global("mysummoner","LOCALS",3))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMB")
+		MoveGlobalObject("SY#IBMB",Player3)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMB","GLOBAL",0)
+	Exists("SY#IBMB")
+	!InActiveArea("SY#IBMB")
+	IsActive("SY#IBMB")
+	TriggerOverride("SY#IBMB",Global("mysummoner","LOCALS",4))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMB")
+		MoveGlobalObject("SY#IBMB",Player4)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMB","GLOBAL",0)
+	Exists("SY#IBMB")
+	!InActiveArea("SY#IBMB")
+	IsActive("SY#IBMB")
+	TriggerOverride("SY#IBMB",Global("mysummoner","LOCALS",5))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMB")
+		MoveGlobalObject("SY#IBMB",Player5)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMB","GLOBAL",0)
+	Exists("SY#IBMB")
+	!InActiveArea("SY#IBMB")
+	IsActive("SY#IBMB")
+	TriggerOverride("SY#IBMB",Global("mysummoner","LOCALS",6))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMB")
+		MoveGlobalObject("SY#IBMB",Player6)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMW","GLOBAL",0)
+	Exists("SY#IBMW")
+	!InActiveArea("SY#IBMW")
+	IsActive("SY#IBMW")
+	TriggerOverride("SY#IBMW",Global("mysummoner","LOCALS",1))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMW")
+		MoveGlobalObject("SY#IBMW",Player1)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMW","GLOBAL",0)
+	Exists("SY#IBMW")
+	!InActiveArea("SY#IBMW")
+	IsActive("SY#IBMW")
+	TriggerOverride("SY#IBMW",Global("mysummoner","LOCALS",2))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMW")
+		MoveGlobalObject("SY#IBMW",Player2)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMW","GLOBAL",0)
+	Exists("SY#IBMW")
+	!InActiveArea("SY#IBMW")
+	IsActive("SY#IBMW")
+	TriggerOverride("SY#IBMW",Global("mysummoner","LOCALS",3))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMW")
+		MoveGlobalObject("SY#IBMW",Player3)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMW","GLOBAL",0)
+	Exists("SY#IBMW")
+	!InActiveArea("SY#IBMW")
+	IsActive("SY#IBMW")
+	TriggerOverride("SY#IBMW",Global("mysummoner","LOCALS",4))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMW")
+		MoveGlobalObject("SY#IBMW",Player4)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMW","GLOBAL",0)
+	Exists("SY#IBMW")
+	!InActiveArea("SY#IBMW")
+	IsActive("SY#IBMW")
+	TriggerOverride("SY#IBMW",Global("mysummoner","LOCALS",5))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMW")
+		MoveGlobalObject("SY#IBMW",Player5)
+		Continue()
+END
+
+IF
+	!Global("SY#IBMW","GLOBAL",0)
+	Exists("SY#IBMW")
+	!InActiveArea("SY#IBMW")
+	IsActive("SY#IBMW")
+	TriggerOverride("SY#IBMW",Global("mysummoner","LOCALS",6))
+THEN
+	RESPONSE #100
+		ClearActions("SY#IBMW")
+		MoveGlobalObject("SY#IBMW",Player6)
+		Continue()
+END
+

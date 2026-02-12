@@ -1,0 +1,480 @@
+//只召唤了一个，正常初始化
+IF
+	Global("SY#IBMA","GLOBAL",0)
+	Global("IamSummoned","LOCALS",0)
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMA","GLOBAL",1)
+		SetGlobal("IamSummoned","LOCALS",1)
+		Continue()
+END
+//已经存在一个了，但自身未初始化，脚本轮结束等下一轮继续
+IF
+	Global("SY#IBMA","GLOBAL",1)
+	Global("IamSummoned","LOCALS",0)
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMA","GLOBAL",1)
+		SetGlobal("IamSummoned","LOCALS",1)
+END
+//存在超过一个，自身已经初始化或存在至少一个脚本轮，消失并减少记数
+IF
+	GlobalGT("SY#IBMA","GLOBAL",1)
+	Global("IamSummoned","LOCALS",1)
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMA","GLOBAL",-1)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+
+//初始化时没找到召唤者，直接消失
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	!Exists(LastSummonerOf())
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMA","GLOBAL",-1)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+//如果存在召唤者，则判断召唤者是第几个，记录
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),0)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",1)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),1)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",2)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),2)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",3)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),3)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",4)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),4)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",5)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),5)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",6)
+		Continue()
+END
+
+//全局化
+IF
+	Global("FORMAT","LOCALS",0)
+THEN
+	RESPONSE #100
+		MakeGlobalOverride()
+		SetGlobal("FORMAT","LOCALS",1)
+		Continue()
+END
+
+//根据召唤者身上变量赋予技能
+IF
+	Global("highlevelskills","LOCALS",0)
+	!TriggerOverride(LastSummonerOf(),GlobalGT("SY#IBMHL","LOCALS",0))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",1))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH1",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",2))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH2",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",3))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH3",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",4))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH4",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",5))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH5",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",6))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH6",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),GlobalGT("SY#IBMHL","LOCALS",6))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH7",Myself)
+		Continue()
+END
+
+//休息死亡消失
+IF
+	Global("IamSummoned","LOCALS",1)
+	Global("SY#IBMA","GLOBAL",0)
+THEN
+	RESPONSE #100
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Die()
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+
+//召唤者死亡
+IF
+	Died(Player1)
+	Global("mysummoner","LOCALS",1)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player2)
+	Global("mysummoner","LOCALS",2)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player3)
+	Global("mysummoner","LOCALS",3)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player4)
+	Global("mysummoner","LOCALS",4)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player5)
+	Global("mysummoner","LOCALS",5)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player6)
+	Global("mysummoner","LOCALS",6)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMA","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+//消失后不再出现
+IF
+	Global("IamSummoned","LOCALS",2)
+	IsActive(Myself)
+THEN
+	RESPONSE #100
+		Deactivate(Myself)
+		DestroySelf()
+END
+
+//如果中途出问题
+IF
+	!Allegiance(Myself,CONTROLLED)
+THEN
+	RESPONSE #100
+		ChangeEnemyAlly(Myself,CONTROLLED)
+		Continue()
+END
+
+//太近的话
+IF
+	Range([GOODCUTOFF],1)
+THEN
+	RESPONSE #100
+		JumpToObject([GOODCUTOFF])
+		Continue()
+END
+
+//战斗脚本
+IF
+	HotKey(D)
+THEN
+	RESPONSE #100
+		DisplayStringHead(Myself,#95137)
+		SetGlobal("deactivefighting","LOCALS",1)
+END
+
+IF
+	HotKey(N)
+THEN
+	RESPONSE #100
+		DisplayStringHead(Myself,#95135)
+		SetGlobal("deactivefighting","LOCALS",0)
+END
+
+//跟着走
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",1)
+	InMyArea(Player1)
+	!Range(Player1,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player1)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",2)
+	InMyArea(Player2)
+	!Range(Player2,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player2)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",3)
+	InMyArea(Player3)
+	!Range(Player3,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player3)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",4)
+	InMyArea(Player4)
+	!Range(Player4,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player4)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",5)
+	InMyArea(Player5)
+	!Range(Player5,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player5)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",6)
+	InMyArea(Player6)
+	!Range(Player6,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player6)
+END
+
+//战斗
+//优先使用远程武器，敌人离开就切回去
+IF
+	ActionListEmpty()
+	!IsWeaponRanged(Myself)
+	OR(2)
+		!See(NearestEnemyOf(Myself))
+		!Range(NearestEnemyOf(Myself),4)
+THEN
+	RESPONSE #100
+		EquipRanged()
+END
+
+//敌人靠近，切换肉搏
+IF
+	See(NearestEnemyOf())
+	Range(NearestEnemyOf(Myself),4)
+	IsWeaponRanged(Myself)
+THEN
+	RESPONSE #100
+		EquipMostDamagingMelee()
+END
+
+//优先打射程内法系
+IF
+	ActionListEmpty()
+	Global("deactivefighting","LOCALS",0)
+	IsWeaponRanged(Myself)
+	OR(4)
+		See(NearestEnemyOfType([0.0.0.CLERIC_ALL]))
+		See(NearestEnemyOfType([0.0.0.DRUID_ALL]))
+		See(NearestEnemyOfType([0.0.0.BARD_ALL]))
+		See(NearestEnemyOfType([0.0.0.MAGE_ALL]))
+	WeaponEffectiveVs(LastSeenBy(Myself),MAINHAND)
+	WeaponCanDamage(LastSeenBy(Myself),MAINHAND)
+	!CheckStatGT(LastSeenBy(Myself),0,CLERIC_PHYSICAL_MIRROR)
+THEN
+	RESPONSE #100
+		AttackReevaluate(LastSeenBy(Myself),90)
+END
+IF
+	ActionListEmpty()
+	Global("deactivefighting","LOCALS",0)
+	IsWeaponRanged(Myself)
+	OR(4)
+		See(SecondNearestEnemyOfType([0.0.0.CLERIC_ALL]))
+		See(SecondNearestEnemyOfType([0.0.0.DRUID_ALL]))
+		See(SecondNearestEnemyOfType([0.0.0.BARD_ALL]))
+		See(SecondNearestEnemyOfType([0.0.0.MAGE_ALL]))
+	WeaponEffectiveVs(LastSeenBy(Myself),MAINHAND)
+	WeaponCanDamage(LastSeenBy(Myself),MAINHAND)
+	!CheckStatGT(LastSeenBy(Myself),0,CLERIC_PHYSICAL_MIRROR)
+THEN
+	RESPONSE #100
+		AttackReevaluate(LastSeenBy(Myself),90)
+END
+
+//次之打射程内攻击自己的人
+IF
+	ActionListEmpty()
+	Global("deactivefighting","LOCALS",0)
+	IsWeaponRanged(Myself)
+	AttackedBy([ENEMY],DEFAULT)
+	WeaponEffectiveVs(LastAttackerOf(Myself),MAINHAND)
+	WeaponCanDamage(LastAttackerOf(Myself),MAINHAND)
+	!CheckStatGT(LastSeenBy(Myself),0,CLERIC_PHYSICAL_MIRROR)
+THEN
+	RESPONSE #100
+		AttackReevaluate(LastAttackerOf(Myself),90)
+END
+
+//最后打最近的敌人
+IF
+	ActionListEmpty()
+	Global("deactivefighting","LOCALS",0)
+	See(NearestEnemyOf(Myself))
+	WeaponEffectiveVs(NearestEnemyOf(Myself),MAINHAND)
+	WeaponCanDamage(NearestEnemyOf(Myself),MAINHAND)
+	OR(2)
+		!IsWeaponRanged(Myself)
+		!CheckStatGT(NearestEnemyOf(Myself),0,CLERIC_PHYSICAL_MIRROR)
+THEN
+	RESPONSE #100
+		AttackReevaluate(NearestEnemyOf(Myself),90)
+END
+IF
+	ActionListEmpty()
+	Global("deactivefighting","LOCALS",0)
+	See(SecondNearestEnemyOf(Myself))
+	WeaponEffectiveVs(SecondNearestEnemyOf(Myself),MAINHAND)
+	WeaponCanDamage(SecondNearestEnemyOf(Myself),MAINHAND)
+	OR(2)
+		!IsWeaponRanged(Myself)
+		!CheckStatGT(SecondNearestEnemyOf(Myself),0,CLERIC_PHYSICAL_MIRROR)
+THEN
+	RESPONSE #100
+		AttackReevaluate(SecondNearestEnemyOf(Myself),90)
+END
+IF
+	ActionListEmpty()
+	Global("deactivefighting","LOCALS",0)
+	See(ThirdNearestEnemyOf(Myself))
+	WeaponEffectiveVs(ThirdNearestEnemyOf(Myself),MAINHAND)
+	WeaponCanDamage(ThirdNearestEnemyOf(Myself),MAINHAND)
+	OR(2)
+		!IsWeaponRanged(Myself)
+		!CheckStatGT(ThirdNearestEnemyOf(Myself),0,CLERIC_PHYSICAL_MIRROR)
+THEN
+	RESPONSE #100
+		AttackReevaluate(ThirdNearestEnemyOf(Myself),90)
+END

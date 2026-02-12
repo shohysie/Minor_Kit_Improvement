@@ -1,13 +1,14 @@
 BACKUP ~Minor_Kit_Improvement/backup~
 AUTHOR ~shohy@126.com~
 
-VERSION ~v0.2~
+VERSION ~v0.3~
 AUTO_EVAL_STRINGS
 
 README ~%MOD_FOLDER%/README.%LANGUAGE%.txt~
 AUTO_TRA ~%MOD_FOLDER%/tra/%s~
 
 LANGUAGE  ~American English~	~english~	~Minor_Kit_Improvement/tra/english/setup.tra~
+											~Minor_Kit_Improvement/tra/english/drunken_master.tra~
 											~Minor_Kit_Improvement/tra/english/improvedbeastmaster.tra~
 											~Minor_Kit_Improvement/tra/english/improvedmonk.tra~
 											~Minor_Kit_Improvement/tra/english/ImprovedWizardSlayer.tra~
@@ -15,11 +16,556 @@ LANGUAGE  ~American English~	~english~	~Minor_Kit_Improvement/tra/english/setup.
 											~Minor_Kit_Improvement/tra/english/shaman_hauler.tra~
 											
 LANGUAGE  ~Simplified Chinese~	~schinese~	~Minor_Kit_Improvement/tra/schinese/setup.tra~
+											~Minor_Kit_Improvement/tra/schinese/drunken_master.tra~
 											~Minor_Kit_Improvement/tra/schinese/improvedbeastmaster.tra~
 											~Minor_Kit_Improvement/tra/schinese/improvedmonk.tra~ 
 											~Minor_Kit_Improvement/tra/schinese/improvedwizardslayer.tra~
 											~Minor_Kit_Improvement/tra/schinese/prestigedragondisciple.tra~
 											~Minor_Kit_Improvement/tra/schinese/shaman_hauler.tra~
+
+
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+// Drunken Master
+///////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+BEGIN @601	//醉仙罗汉
+
+//新宗派名称和代码判断，三个备选
+OUTER_SET kitname1 = 0
+OUTER_SET kitname2 = 0
+OUTER_SET kitname3 = 0
+OUTER_SET kitablity1 = 0
+OUTER_SET kitablity2 = 0
+OUTER_SET kitablity3 = 0
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 10 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 1 9 "kitname"
+		READ_2DA_ENTRY kitrow 5 9 "kitability"
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~DRUNKEN_MASTER~ THEN BEGIN SET kitname1 = 1 END
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~DRUNKENMASTER~ THEN BEGIN SET kitname2 = 1 END
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~DRUNKENXMASTER~ THEN BEGIN SET kitname3 = 1 END
+		PATCH_IF ~%kitability%~ STRING_EQUAL_CASE ~CLABMODM~ THEN BEGIN SET kitablity1 = 1 END
+		PATCH_IF ~%kitability%~ STRING_EQUAL_CASE ~CLABMODR~ THEN BEGIN SET kitablity2 = 1 END
+		PATCH_IF ~%kitability%~ STRING_EQUAL_CASE ~CLABMOIN~ THEN BEGIN SET kitablity3 = 1 END
+	END
+	PATCH_IF kitname1 == 0 THEN BEGIN
+		SPRINT newkitname ~DRUNKEN_MASTER~
+	END ELSE BEGIN
+		PATCH_IF kitname2 == 0 THEN BEGIN
+			SPRINT newkitname ~DRUNKENMASTER~
+		END ELSE BEGIN
+			PATCH_IF kitname3 == 0 THEN BEGIN
+				SPRINT newkitname ~DRUNKENXMASTER~
+			END ELSE BEGIN
+				PATCH_FAIL @197	//无法安装新宗派，因为已经存在同名宗派
+			END
+		END
+	END
+	PATCH_IF kitablity1 == 0 THEN BEGIN
+		SPRINT newkitablity ~CLABMODM~
+	END ELSE BEGIN
+		PATCH_IF kitablity2 == 0 THEN BEGIN
+			SPRINT newkitablity ~CLABMODR~
+		END ELSE BEGIN
+			PATCH_IF kitablity3 == 0 THEN BEGIN
+				SPRINT newkitablity ~CLABMOIN~
+			END ELSE BEGIN
+				PATCH_FAIL @198	//无法安装新宗派，因为宗派代码已被使用
+			END
+		END
+	END
+BUT_ONLY
+OUTER_SET luabbrev1 = 0
+OUTER_SET luabbrev2 = 0
+OUTER_SET luabbrev3 = 0
+COPY_EXISTING ~luabbr.2da~ ~override~
+	COUNT_2DA_ROWS 2 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 1 2 "luabbrev"
+		PATCH_IF ~%luabbrev%~ STRING_EQUAL_CASE ~MDM~ THEN BEGIN SET luabbrev1 = 1 END
+		PATCH_IF ~%luabbrev%~ STRING_EQUAL_CASE ~MDR~ THEN BEGIN SET luabbrev2 = 1 END
+		PATCH_IF ~%luabbrev%~ STRING_EQUAL_CASE ~MIN~ THEN BEGIN SET luabbrev3 = 1 END
+	END
+	PATCH_IF luabbrev1 == 0 THEN BEGIN
+		SPRINT newluabbrev ~MDM~
+	END ELSE BEGIN
+		PATCH_IF luabbrev2 == 0 THEN BEGIN
+			SPRINT newluabbrev ~MDR~
+		END ELSE BEGIN
+			PATCH_IF luabbrev3 == 0 THEN BEGIN
+				SPRINT newluabbrev ~MIN~
+			END ELSE BEGIN
+				PATCH_FAIL @198	//无法安装新宗派，因为宗派代码已被使用
+			END
+		END
+	END
+BUT_ONLY
+
+//添加醉酒判断1
+OUTER_SET "splprot_intoxication1" = 0
+COPY_EXISTING ~splprot.2da~ ~override~
+	COUNT_2DA_ROWS 4 rows
+	FOR ( index = 0 ; index < rows ; index = index + 1 ) BEGIN
+		READ_2DA_ENTRY "%index%" 1 4 "splprot_stat"
+		READ_2DA_ENTRY "%index%" 2 4 "splprot_value"
+		READ_2DA_ENTRY "%index%" 3 4 "splprot_relation"
+	  //PATCH_PRINT ~%index% %splprot_stat% %splprot_value% %splprot_relation%~
+		PATCH_IF ("%splprot_stat%" STRING_COMPARE_CASE "31" = 0) & ("%splprot_value%" STRING_COMPARE_CASE "-1" = 0) & ("%splprot_relation%" STRING_COMPARE_CASE "4" = 0) BEGIN	//有现成的醉酒判断行
+			SET "splprot_intoxication1" = "%index%"
+			SET "index" = "%rows%" + 1 // kills loop
+		END
+	END
+	PATCH_IF (splprot_intoxication1 == 0) BEGIN
+		SET "splprot_intoxication1" = "%rows%"
+		INSERT_2DA_ROW rows 4 ~%rows%_INTOXICATION>=n                           31                                            -1                                            4~
+	END
+BUT_ONLY	//splprot_intoxication1为splprot.2da新增INTOXICATION>=n判断行的编号
+//添加醉酒判断2
+OUTER_SET "splprot_intoxication2" = 0
+COPY_EXISTING ~splprot.2da~ ~override~
+	COUNT_2DA_ROWS 4 rows
+	FOR ( index = 0 ; index < rows ; index = index + 1 ) BEGIN
+		READ_2DA_ENTRY "%index%" 1 4 "splprot_stat"
+		READ_2DA_ENTRY "%index%" 2 4 "splprot_value"
+		READ_2DA_ENTRY "%index%" 3 4 "splprot_relation"
+	  //PATCH_PRINT ~%index% %splprot_stat% %splprot_value% %splprot_relation%~
+		PATCH_IF ("%splprot_stat%" STRING_COMPARE_CASE "31" = 0) & ("%splprot_value%" STRING_COMPARE_CASE "-1" = 0) & ("%splprot_relation%" STRING_COMPARE_CASE "2" = 0) BEGIN	//有现成的醉酒判断行
+			SET "splprot_intoxication2" = "%index%"
+			SET "index" = "%rows%" + 1 // kills loop
+		END
+	END
+	PATCH_IF (splprot_intoxication2 == 0) BEGIN
+		SET "splprot_intoxication2" = "%rows%"
+		INSERT_2DA_ROW rows 4 ~%rows%_INTOXICATION<n                            31                                            -1                                            2~
+	END
+BUT_ONLY	//splprot_intoxication2为splprot.2da新增INTOXICATION<n判断行的编号
+
+ADD_PROJECTILE ~%MOD_FOLDER%/drunken_master/pro/SY#IDM5A.pro~
+
+COMPILE ~%MOD_FOLDER%/drunken_master/baf~
+COMPILE ~%MOD_FOLDER%/drunken_master/dlg~
+
+COPY ~%MOD_FOLDER%/drunken_master/bam~ ~override~
+COPY ~%MOD_FOLDER%/drunken_master/cre~ ~override~
+COPY ~%MOD_FOLDER%/drunken_master/eff~ ~override~
+
+COPY ~%MOD_FOLDER%/drunken_master/itm/SY#IDMA1.itm~ ~override~
+	SAY NAME2 @621	//随身酒壶
+	SAY IDENTIFIED_DESC @622
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/noname~ ~override~
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM5A.spl~ ~override~
+	WRITE_SHORT   0x98 ~%SY#IDM5A%~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 326 target = 2 timing = 1 parameter1 = 50 parameter2 = ~%splprot_intoxication2%~ STR_VAR resource = ~SY#IDM5B~ END	//对手醉意<50，施展SY#IDM5B
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 326 target = 2 timing = 1 parameter1 = 50 parameter2 = ~%splprot_intoxication1%~ STR_VAR resource = ~SY#IDM5C~ END	//对手醉意>=50，施展SY#IDM5C
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM5B.spl~ ~override~
+	SAY NAME1 @615	//喷酒
+	SAY UNIDENTIFIED_DESC @615
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@616) END	//目盲
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 318 target = 2 parameter1 = 20 parameter2 = ~%splprot_intoxication2%~ STR_VAR resource = ~SY#IDM5B~ END	//对手醉意<20，不显示醉酒
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 timing = 1 parameter1 = RESOLVE_STR_REF(@613) END	//显示醉酒
+	
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM5B.spl~ ~override/SY#IDM5C.spl~
+	SAY NAME1 @615	//喷酒
+	SAY UNIDENTIFIED_DESC @615
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@616) END	//目盲
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 timing = 1 parameter1 = RESOLVE_STR_REF(@614) END	//显示严重醉酒
+	
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM6A.spl~ ~override~
+	WRITE_SHORT   0x98 ~%SY#IDM5A%~
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM6B.spl~ ~override~
+	SAY NAME1 @617	//擒摔
+	SAY UNIDENTIFIED_DESC @617
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM7B.spl~ ~override~
+	SAY NAME1 @618	//锁喉
+	SAY UNIDENTIFIED_DESC @618
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM10.spl~ ~override~
+	SAY NAME1 @631	//吕洞宾，醉酒提壶力千钧！
+	SAY UNIDENTIFIED_DESC @632
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM20.spl~ ~override~
+	SAY NAME1 @633	//铁拐李，旋踵膝撞醉还真！
+	SAY UNIDENTIFIED_DESC @634
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM30.spl~ ~override~
+	SAY NAME1 @635	//汉钟离，醉步抱埕兜心顶！
+	SAY UNIDENTIFIED_DESC @636
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM40.spl~ ~override~
+	SAY NAME1 @637	//张果老，醉酒抛杯踢连环！
+	SAY UNIDENTIFIED_DESC @638
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM50.spl~ ~override~
+	SAY NAME1 @639	//韩湘子，擒腕擎胸醉吹箫！
+	SAY UNIDENTIFIED_DESC @640
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM60.spl~ ~override~
+	SAY NAME1 @641	//蓝采和，单提敬酒拦腰破！
+	SAY UNIDENTIFIED_DESC @642
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM70.spl~ ~override~
+	SAY NAME1 @643	//曹国舅，仙人敬酒锁喉扣！
+	SAY UNIDENTIFIED_DESC @644
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM80.spl~ ~override~
+	SAY NAME1 @645	//何仙姑，弹腰献酒醉荡步！
+	SAY UNIDENTIFIED_DESC @646
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM91.spl~ ~override~ ~%MOD_FOLDER%/drunken_master/spl/SY#IDM92.spl~ ~override~
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 326 parameter2 = ~%splprot_intoxication1%~ END	//醉酒判断
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 326 insert_point = 0 target = 2 timing = 1 parameter1 = 30 parameter2 = ~%splprot_intoxication2%~ STR_VAR resource = ~SY#IDM9X~ END	//移除HP修正
+	
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMA0.spl~ ~override~	//饮酒，技能会自动恢复
+	SAY NAME1 @621	//随身酒壶
+	SAY UNIDENTIFIED_DESC @622
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@619) END	//咕噜！
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 326 parameter2 = ~%splprot_intoxication1%~ END	//醉酒判断
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMA1.spl~ ~override~
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@619) END	//咕噜！
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 326 parameter2 = ~%splprot_intoxication1%~ END	//醉酒判断
+
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMA.spl~ ~override~
+	SAY NAME1 @623	//选择酒壶位置
+	SAY UNIDENTIFIED_DESC @624
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMB.spl~ ~override~
+	SAY NAME1 @661	//酒劲全开
+	SAY UNIDENTIFIED_DESC @662
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMC.spl~ ~override~
+	SAY NAME1 @663	//八仙共醉
+	SAY UNIDENTIFIED_DESC @664
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMD.spl~ ~override~
+	SAY NAME1 @665	//惯醉之躯
+	SAY UNIDENTIFIED_DESC @666
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDME.spl~ ~override~
+	SAY NAME1 @667	//烈酒镇痛
+	SAY UNIDENTIFIED_DESC @668
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDME1.spl~ ~override~
+	SAY NAME1 @667	//烈酒镇痛
+	SAY UNIDENTIFIED_DESC @667
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMF.spl~ ~override~
+	SAY NAME1 @669	//醉误成招
+	SAY UNIDENTIFIED_DESC @670
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMG.spl~ ~override~
+	SAY NAME1 @671	//今朝方醒
+	SAY UNIDENTIFIED_DESC @672
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMH.spl~ ~override~
+	SAY NAME1 @673	//长鲸吸水
+	SAY UNIDENTIFIED_DESC @674	
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMH1.spl~ ~override~
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@680) END	//中断长鲸吸水
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMI.spl~ ~override~
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 321 parameter2 = ~%splprot_intoxication2%~ END	//醉酒判断
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@679) END	//未饮酒，无法发动技能
+	SAY NAME1 @675	//酩酊乱打
+	SAY UNIDENTIFIED_DESC @676
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMJ.spl~ ~override~
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 318 parameter2 = ~%splprot_intoxication1%~ END	//醉酒判断
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 326 parameter2 = ~%splprot_intoxication1%~ END	//醉酒判断
+	LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@679) END	//未饮酒，无法发动技能
+	SAY NAME1 @677	//醉态百出
+	SAY UNIDENTIFIED_DESC @678
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMU.spl~ ~override~
+	SAY NAME1 @651	//舒筋活络
+	SAY UNIDENTIFIED_DESC @652	
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMV.spl~ ~override~
+	SAY NAME1 @653	//烈酒吐息
+	SAY UNIDENTIFIED_DESC @654
+
+//显示醉酒程度
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9A.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@681) END	//一分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@681) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9B.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@682) END	//两分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@682) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9C.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@683) END	//三分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@683) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9D.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@684) END	//四分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@684) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@683) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9E.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@685) END	//五分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@685) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@684) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@683) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9F.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@686) END	//六分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@686) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@685) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@684) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@683) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9G.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@687) END	//七分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@687) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@686) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@685) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@684) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@683) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9H.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@688) END	//八分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@688) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@687) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@686) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@685) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@684) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@683) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9I.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@689) END	//九分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@689) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@688) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@687) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@686) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@685) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@684) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@683) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9J.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@690) END	//满醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@690) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@689) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@688) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@687) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@686) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@685) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@684) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@683) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 3 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 3 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9O.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@681) END	//一分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 4 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@681) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 4 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9P.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@682) END	//两分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 4 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@682) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 4 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 4 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDM9Q.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 insert_point = 0 target = 1 timing = 1 parameter1 = RESOLVE_STR_REF(@683) END	//三分醉
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 215 insert_point = 0 target = 1 timing = 10 duration = 6 STR_VAR resource = ~SY#IDM90~ END	//头顶冒烟
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 4 target = 1 timing = 10 duration = 100 parameter1 = RESOLVE_STR_REF(@683) END	//只显示一次喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 4 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@682) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 267 insert_point = 4 target = 1 timing = 0 duration = 0 parameter1 = RESOLVE_STR_REF(@681) END	//不显示更低的喝醉程度
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 296 insert_point = 4 target = 1 timing = 10 duration = 100 STR_VAR resource = ~SY#IDM90~ END	//头顶只冒烟一次
+
+//醉误成招，塔莎狂笑术
+COPY ~%MOD_FOLDER%/drunken_master/spl/SY#IDMF3.spl~ ~override~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 9 probability2 = 0 parameter1 = RESOLVE_STR_REF(@691)  END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 19 probability2 = 10 parameter1 = RESOLVE_STR_REF(@692)  END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 29 probability2 = 20 parameter1 = RESOLVE_STR_REF(@693)  END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 31 probability2 = 30 parameter1 = RESOLVE_STR_REF(@694)  END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 59 probability2 = 50 parameter1 = RESOLVE_STR_REF(@695)  END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 69 probability2 = 60 parameter1 = RESOLVE_STR_REF(@696)  END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 79 probability2 = 70 parameter1 = RESOLVE_STR_REF(@697)  END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode = 139 target = 2 probability1 = 81 probability2 = 80 parameter1 = RESOLVE_STR_REF(@698)  END
+
+//战斗姿态，需要复制两个文件来回调用保持一直存在
+OUTER_FOR (dmstyle = 1 ; dmstyle < 9 ; ++dmstyle) BEGIN
+	COPY_EXISTING ~SY#IDM%dmstyle%0.spl~ ~override/SY#IDM%dmstyle%1.spl~
+		WRITE_LONG 0x08 0xffffffff
+		WRITE_LONG 0x0c 0xffffffff
+		WRITE_SHORT 0x1c 0
+		LPF ALTER_SPELL_HEADER INT_VAR location = 0 target = 1 END
+		LPF ALTER_SPELL_EFFECT INT_VAR target = 2 END
+		LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 232 STR_VAR resource = ~SY#IDM%dmstyle%2~ END
+	COPY_EXISTING ~SY#IDM%dmstyle%1.spl~ ~override/SY#IDM%dmstyle%2.spl~
+		LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 232 STR_VAR resource = ~SY#IDM%dmstyle%1~ END
+END
+
+//添加宗派
+INCLUDE ~%MOD_FOLDER%/lib/fl#add_kit_ee.tpa~
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_D.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_D.2DA~
+END
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_G.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_G.2DA~
+END
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_E.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_E.2DA~
+END
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HE.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HE.2DA~
+END
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HL.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HL.2DA~
+END
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HO.2DA~ THEN BEGIN
+	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HO.2DA~
+END
+
+COPY ~%MOD_FOLDER%/drunken_master/2da/LUMOD.2DA~ ~override/LU%newluabbrev%.2DA~
+COPY ~%MOD_FOLDER%/drunken_master/2da/CLABMODM.2DA~ ~override/%newkitablity%.2DA~
+
+ACTION_IF ~%newkitablity%~ STRING_EQUAL_CASE ~CLABMODM~ THEN BEGIN
+	ADD_KIT ~%newkitname%~
+	/* CLASWEAP.2DA */
+		~%newkitname% 1 1 1 1 1 0 0 0~
+	/* WEAPPROF.2DA */
+		~%newkitname% 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
+	/* ABCLASRQ.2DA */
+		~%newkitname% 11 11 11 6 6 6~
+	/* ABCLSMOD.2DA */
+		~%newkitname% 0 0 0 0 0 0~
+	/* ABDCDSRQ.2DA */
+		~%newkitname% 0 17 17 0 17 0~
+	/* ABDCSCRQ.2DA */
+		~%newkitname% 0 15 15 0 15 0~
+	/* ALIGNMNT.2DA */
+		~%newkitname% 1 1 1 0 0 0 0 0 0~
+	/* DUALCLAS.2DA */
+		~%newkitname% 0 0 0 0 0 0~
+	/* The path of abilities 2DA file */
+		~override/CLABMODM.2DA~
+	/* KITTABLE.2DA */
+		~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
+	/* KITLIST.2DA */
+		~0x00004000 20~
+	/* LUABBR.2DA */
+		~%newluabbrev%~
+	/* 25STWEAP.2DA */
+		~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
+		SAY @611
+		SAY @611
+		SAY @612
+	LAF fl#add_kit_ee
+	  STR_VAR
+	    kit_name = ~%newkitname%~
+	    clswpbon = ~1 3 2~
+	    hpclass = ~HPMONK~
+	    clsrcreq = ~1 1 1 1 1 1 1~
+	    numwslot = 3
+	    clascolr = ~25 28 57 2 24~
+	END	
+END ELSE BEGIN
+	ACTION_IF ~%newkitablity%~ STRING_EQUAL_CASE ~CLABMODR~ THEN BEGIN
+		ADD_KIT ~%newkitname%~
+		/* CLASWEAP.2DA */
+			~%newkitname% 1 1 1 1 1 0 0 0~
+		/* WEAPPROF.2DA */
+			~%newkitname% 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
+		/* ABCLASRQ.2DA */
+			~%newkitname% 11 11 11 6 6 6~
+		/* ABCLSMOD.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* ABDCDSRQ.2DA */
+			~%newkitname% 0 17 17 0 17 0~
+		/* ABDCSCRQ.2DA */
+			~%newkitname% 0 15 15 0 15 0~
+		/* ALIGNMNT.2DA */
+			~%newkitname% 1 1 1 0 0 0 0 0 0~
+		/* DUALCLAS.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* The path of abilities 2DA file */
+			~override/CLABMODR.2DA~
+		/* KITTABLE.2DA */
+			~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
+		/* KITLIST.2DA */
+			~0x00004000 20~
+		/* LUABBR.2DA */
+			~%newluabbrev%~
+		/* 25STWEAP.2DA */
+			~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
+			SAY @611
+			SAY @611
+			SAY @612
+		LAF fl#add_kit_ee
+		  STR_VAR
+			kit_name = ~%newkitname%~
+			clswpbon = ~1 3 2~
+			hpclass = ~HPMONK~
+			clsrcreq = ~1 1 1 1 1 1 1~
+			numwslot = 3
+			clascolr = ~25 28 57 2 24~
+		END		
+	END ELSE BEGIN
+		ADD_KIT ~%newkitname%~
+		/* CLASWEAP.2DA */
+			~%newkitname% 1 1 1 1 1 0 0 0~
+		/* WEAPPROF.2DA */
+			~%newkitname% 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
+		/* ABCLASRQ.2DA */
+			~%newkitname% 11 11 11 6 6 6~
+		/* ABCLSMOD.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* ABDCDSRQ.2DA */
+			~%newkitname% 0 17 17 0 17 0~
+		/* ABDCSCRQ.2DA */
+			~%newkitname% 0 15 15 0 15 0~
+		/* ALIGNMNT.2DA */
+			~%newkitname% 1 1 1 0 0 0 0 0 0~
+		/* DUALCLAS.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* The path of abilities 2DA file */
+			~override/CLABMOIN.2DA~
+		/* KITTABLE.2DA */
+			~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
+		/* KITLIST.2DA */
+			~0x00004000 20~
+		/* LUABBR.2DA */
+			~%newluabbrev%~
+		/* 25STWEAP.2DA */
+			~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
+			SAY @611
+			SAY @611
+			SAY @612
+		LAF fl#add_kit_ee
+		  STR_VAR
+			kit_name = ~%newkitname%~
+			clswpbon = ~1 3 2~
+			hpclass = ~HPMONK~
+			clsrcreq = ~1 1 1 1 1 1 1~
+			numwslot = 3
+			clascolr = ~25 28 57 2 24~
+		END
+	END
+END
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -53,8 +599,8 @@ COPY_EXISTING ~kitlist.2da~ ~override~
 			READ_2DA_ENTRY kitrow 1 9 "kitname"
 			READ_2DA_ENTRY kitrow 5 9 "kitability"
 			INNER_ACTION BEGIN	//处理非高阶技能列表
-				APPEND ~%kitability%.2da~ ~ABILITYA **** **** **** **** **** **** GA_IPMONK09 **** **** GA_IPMONK08 **** **** **** **** GA_IPMONK08 GA_IPMONK09 **** **** **** **** **** **** **** **** GA_IPMONK09 CDREPLACE
-ABILITYB GA_IPMONK0B **** **** GA_IPMONK10 **** **** GA_IPMONK10 **** **** GA_IPMONK10 GA_IPMONK07 **** **** **** GA_IPMONK0C GA_IPMONK07 **** **** **** **** GA_IPMONK0C **** **** **** **** CDREPLACE~
+				APPEND ~%kitability%.2da~ ~ABILITYA **** **** **** **** **** **** GA_SY#IMK09 **** **** GA_SY#IMK08 **** **** **** **** GA_SY#IMK08 GA_SY#IMK09 **** **** **** **** **** **** **** **** GA_SY#IMK09 CDREPLACE
+ABILITYB GA_SY#IMK0B **** **** GA_SY#IMK10 **** **** GA_SY#IMK10 **** **** GA_SY#IMK10 GA_SY#IMK07 **** **** **** GA_SY#IMK0C GA_SY#IMK07 **** **** **** **** GA_SY#IMK0C **** **** **** **** CDREPLACE~
 				COPY_EXISTING ~%kitability%.2da~ ~override~
 					COUNT_2DA_COLS cols
 					FOR (index = 27; index < cols ; ++index) BEGIN
@@ -77,7 +623,7 @@ ABILITYB GA_IPMONK0B **** **** GA_IPMONK10 **** **** GA_IPMONK10 **** **** GA_IP
 									SET "alreadyfixed" = 0									
 									FOR ( index = 1 ; index < rows ; index = index + 1 ) BEGIN
 									  READ_2DA_ENTRY "%index%" 1 9 "abil"
-									  PATCH_IF ("%abil%" STRING_COMPARE_CASE "GA_IPMONK01" = 0) BEGIN	//遇到改过的
+									  PATCH_IF ("%abil%" STRING_COMPARE_CASE "GA_SY#IMK01" = 0) BEGIN	//遇到改过的
 										SET "alreadyfixed" = 1	//这个文件已经改过啦
 									  END
 									  PATCH_IF ("%abil%" STRING_COMPARE_CASE "*" = 0) & ("%alreadyfixed%" = 0) BEGIN	//遇到空行
@@ -101,7 +647,7 @@ ABILITYB GA_IPMONK0B **** **** GA_IPMONK10 **** **** GA_IPMONK10 **** **** GA_IP
 									END
 									PATCH_IF ("%alreadyfixed%" = 0) BEGIN
 										FOR ( patch = 1 ; patch < 7 ; patch = patch + 1 ) BEGIN
-											SET_2DA_ENTRY "emptyrow%patch%" 1 9 ~GA_IPMONK0%patch%~
+											SET_2DA_ENTRY "emptyrow%patch%" 1 9 ~GA_SY#IMK0%patch%~
 											SET_2DA_ENTRY "emptyrow%patch%" 4 9 ~1~
 											SET_2DA_ENTRY "emptyrow%patch%" 5 9 ~99~
 											SET_2DA_ENTRY "emptyrow%patch%" 6 9 ~20~
@@ -125,26 +671,93 @@ REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @10
 FORBID_COMPONENT "Setup-improvedMonk.tp2" "0" @109	//已经安装了旧版
 SUBCOMPONENT @101
 
+//新宗派名称和代码判断，三个备选
+OUTER_SET kitname1 = 0
+OUTER_SET kitname2 = 0
+OUTER_SET kitname3 = 0
+OUTER_SET kitablity1 = 0
+OUTER_SET kitablity2 = 0
+OUTER_SET kitablity3 = 0
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 10 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 1 9 "kitname"
+		READ_2DA_ENTRY kitrow 5 9 "kitability"
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~HONED_MONK~ THEN BEGIN SET kitname1 = 1 END
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~HONEDMONK~ THEN BEGIN SET kitname2 = 1 END
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~HONEDXMONK~ THEN BEGIN SET kitname3 = 1 END
+		PATCH_IF ~%kitability%~ STRING_EQUAL_CASE ~CLABMOIP~ THEN BEGIN SET kitablity1 = 1 END
+		PATCH_IF ~%kitability%~ STRING_EQUAL_CASE ~CLABMOHD~ THEN BEGIN SET kitablity2 = 1 END
+		PATCH_IF ~%kitability%~ STRING_EQUAL_CASE ~CLABMOHO~ THEN BEGIN SET kitablity3 = 1 END
+	END
+	PATCH_IF kitname1 == 0 THEN BEGIN
+		SPRINT newkitname ~HONED_MONK~
+	END ELSE BEGIN
+		PATCH_IF kitname2 == 0 THEN BEGIN
+			SPRINT newkitname ~HONEDMONK~
+		END ELSE BEGIN
+			PATCH_IF kitname3 == 0 THEN BEGIN
+				SPRINT newkitname ~HONEDXMONK~
+			END ELSE BEGIN
+				PATCH_FAIL @197	//无法安装新宗派，因为已经存在同名宗派
+			END
+		END
+	END
+	PATCH_IF kitablity1 == 0 THEN BEGIN
+		SPRINT newkitablity ~CLABMOIP~
+	END ELSE BEGIN
+		PATCH_IF kitablity2 == 0 THEN BEGIN
+			SPRINT newkitablity ~CLABMOHD~
+		END ELSE BEGIN
+			PATCH_IF kitablity3 == 0 THEN BEGIN
+				SPRINT newkitablity ~CLABMOHO~
+			END ELSE BEGIN
+				PATCH_FAIL @198	//无法安装新宗派，因为宗派代码已被使用
+			END
+		END
+	END
+BUT_ONLY
+OUTER_SET luabbrev1 = 0
+OUTER_SET luabbrev2 = 0
+OUTER_SET luabbrev3 = 0
+COPY_EXISTING ~luabbr.2da~ ~override~
+	COUNT_2DA_ROWS 2 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 1 2 "luabbrev"
+		PATCH_IF ~%luabbrev%~ STRING_EQUAL_CASE ~MOI~ THEN BEGIN SET luabbrev1 = 1 END
+		PATCH_IF ~%luabbrev%~ STRING_EQUAL_CASE ~MHD~ THEN BEGIN SET luabbrev2 = 1 END
+		PATCH_IF ~%luabbrev%~ STRING_EQUAL_CASE ~MOH~ THEN BEGIN SET luabbrev3 = 1 END
+	END
+	PATCH_IF luabbrev1 == 0 THEN BEGIN
+		SPRINT newluabbrev ~MOI~
+	END ELSE BEGIN
+		PATCH_IF luabbrev2 == 0 THEN BEGIN
+			SPRINT newluabbrev ~MHD~
+		END ELSE BEGIN
+			PATCH_IF luabbrev3 == 0 THEN BEGIN
+				SPRINT newluabbrev ~MOH~
+			END ELSE BEGIN
+				PATCH_FAIL @198	//无法安装新宗派，因为宗派代码已被使用
+			END
+		END
+	END
+BUT_ONLY
+
 ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_D.2DA~ THEN BEGIN
 	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_D.2DA~
 END
-
 ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_G.2DA~ THEN BEGIN
 	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_G.2DA~
 END
-
 ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_E.2DA~ THEN BEGIN
 	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_E.2DA~
 END
-
 ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HE.2DA~ THEN BEGIN
 	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HE.2DA~
 END
-
 ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HL.2DA~ THEN BEGIN
 	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HL.2DA~
 END
-
 ACTION_IF NOT FILE_EXISTS_IN_GAME ~K_MN_HO.2DA~ THEN BEGIN
 	COPY ~%MOD_FOLDER%/improvedmonk/2da/K_MN_.2DA~ ~override/K_MN_HO.2DA~
 END
@@ -152,54 +765,137 @@ END
 INCLUDE ~%MOD_FOLDER%/lib/copyfiles.tph~
 INCLUDE ~%MOD_FOLDER%/lib/fl#add_kit_ee.tpa~
 
+COPY ~%MOD_FOLDER%/improvedmonk/2da/LUMOI.2DA~ ~override/LU%newluabbrev%.2DA~
+COPY ~%MOD_FOLDER%/improvedmonk/2da/CLABMOIP.2DA~ ~override/%newkitablity%.2DA~
 
-COPY ~%MOD_FOLDER%/improvedmonk/2da/LUMOI.2DA~ ~override~
-
-ADD_KIT ~MOIP~
-/* CLASWEAP.2DA */
-	~MOIP 1 1 1 1 1 0 0 0~
-/* WEAPPROF.2DA */
-	~MOIP 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
-/* ABCLASRQ.2DA */
-	~MOIP 0 9 11 0 9 0~
-/* ABCLSMOD.2DA */
-	~MOIP 0 0 0 0 0 0~
-/* ABDCDSRQ.2DA */
-	~MOIP 0 17 17 0 17 0~
-/* ABDCSCRQ.2DA */
-	~MOIP 0 15 15 0 15 0~
-/* ALIGNMNT.2DA */
-	~MOIP 1 1 1 0 0 0 0 0 0~
-/* DUALCLAS.2DA */
-	~MOIP 0 0 0 0 0 0~
-/* The path of abilities 2DA file */
-	~%MOD_FOLDER%/improvedmonk/2da/CLABMOIP.2DA~
-/* KITTABLE.2DA */
-	~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
-/* KITLIST.2DA */
-	~0x00004000 20~
-/* LUABBR.2DA */
-	~MOI~
-/* 25STWEAP.2DA */
-	~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
-	SAY @108
-	SAY @108
-	SAY @109
-
+ACTION_IF ~%newkitablity%~ STRING_EQUAL_CASE ~CLABMOIP~ THEN BEGIN
+	ADD_KIT ~%newkitname%~
+	/* CLASWEAP.2DA */
+		~%newkitname% 1 1 1 1 1 0 0 0~
+	/* WEAPPROF.2DA */
+		~%newkitname% 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
+	/* ABCLASRQ.2DA */
+		~%newkitname% 11 11 11 6 6 6~
+	/* ABCLSMOD.2DA */
+		~%newkitname% 0 0 0 0 0 0~
+	/* ABDCDSRQ.2DA */
+		~%newkitname% 0 17 17 0 17 0~
+	/* ABDCSCRQ.2DA */
+		~%newkitname% 0 15 15 0 15 0~
+	/* ALIGNMNT.2DA */
+		~%newkitname% 1 1 1 0 0 0 0 0 0~
+	/* DUALCLAS.2DA */
+		~%newkitname% 0 0 0 0 0 0~
+	/* The path of abilities 2DA file */
+		~override/CLABMOIP.2DA~
+	/* KITTABLE.2DA */
+		~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
+	/* KITLIST.2DA */
+		~0x00004000 20~
+	/* LUABBR.2DA */
+		~%newluabbrev%~
+	/* 25STWEAP.2DA */
+		~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
+		SAY @108
+		SAY @108
+		SAY @109
 	LAF fl#add_kit_ee
 	  STR_VAR
-	    kit_name = MOIP
+	    kit_name = ~%newkitname%~
 	    clswpbon = ~1 3 2~
 	    hpclass = ~HPMONK~
 	    clsrcreq = ~1 1 1 1 1 1 1~
 	    numwslot = 3
 	    clascolr = ~25 28 57 2 24~
+	END	
+END ELSE BEGIN
+	ACTION_IF ~%newkitablity%~ STRING_EQUAL_CASE ~CLABMOHD~ THEN BEGIN
+		ADD_KIT ~%newkitname%~
+		/* CLASWEAP.2DA */
+			~%newkitname% 1 1 1 1 1 0 0 0~
+		/* WEAPPROF.2DA */
+			~%newkitname% 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
+		/* ABCLASRQ.2DA */
+			~%newkitname% 11 11 11 6 6 6~
+		/* ABCLSMOD.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* ABDCDSRQ.2DA */
+			~%newkitname% 0 17 17 0 17 0~
+		/* ABDCSCRQ.2DA */
+			~%newkitname% 0 15 15 0 15 0~
+		/* ALIGNMNT.2DA */
+			~%newkitname% 1 1 1 0 0 0 0 0 0~
+		/* DUALCLAS.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* The path of abilities 2DA file */
+			~override/CLABMOHD.2DA~
+		/* KITTABLE.2DA */
+			~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
+		/* KITLIST.2DA */
+			~0x00004000 20~
+		/* LUABBR.2DA */
+			~%newluabbrev%~
+		/* 25STWEAP.2DA */
+			~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
+			SAY @108
+			SAY @108
+			SAY @109
+		LAF fl#add_kit_ee
+		  STR_VAR
+			kit_name = ~%newkitname%~
+			clswpbon = ~1 3 2~
+			hpclass = ~HPMONK~
+			clsrcreq = ~1 1 1 1 1 1 1~
+			numwslot = 3
+			clascolr = ~25 28 57 2 24~
+		END		
+	END ELSE BEGIN
+		ADD_KIT ~%newkitname%~
+		/* CLASWEAP.2DA */
+			~%newkitname% 1 1 1 1 1 0 0 0~
+		/* WEAPPROF.2DA */
+			~%newkitname% 0 1 0 0 1 0 0 1 0 1 1 0 0 1 1 1 0 1 0 0 0 0 0 0 0 0 1 1 0 0 2 3 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0~
+		/* ABCLASRQ.2DA */
+			~%newkitname% 11 11 11 6 6 6~
+		/* ABCLSMOD.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* ABDCDSRQ.2DA */
+			~%newkitname% 0 17 17 0 17 0~
+		/* ABDCSCRQ.2DA */
+			~%newkitname% 0 15 15 0 15 0~
+		/* ALIGNMNT.2DA */
+			~%newkitname% 1 1 1 0 0 0 0 0 0~
+		/* DUALCLAS.2DA */
+			~%newkitname% 0 0 0 0 0 0~
+		/* The path of abilities 2DA file */
+			~override/CLABMOHO.2DA~
+		/* KITTABLE.2DA */
+			~K_MN_H K_MN_D K_MN_G K_MN_E K_MN_HE K_MN_HL K_MN_HO~
+		/* KITLIST.2DA */
+			~0x00004000 20~
+		/* LUABBR.2DA */
+			~%newluabbrev%~
+		/* 25STWEAP.2DA */
+			~* * HELM19 BAG23 RING06 RING29 CLCK02 BOOT01 AMUL19 BRAC16 BELT06 AROW11,40 BULL03,40 BOLT06,40 POTN52,5 POTN04,2 POTN14,5 * * *~
+			SAY @108
+			SAY @108
+			SAY @109
+		LAF fl#add_kit_ee
+		  STR_VAR
+			kit_name = ~%newkitname%~
+			clswpbon = ~1 3 2~
+			hpclass = ~HPMONK~
+			clsrcreq = ~1 1 1 1 1 1 1~
+			numwslot = 3
+			clascolr = ~25 28 57 2 24~
+		END
 	END
+END
 
 
-
-BEGIN @106	//允许武僧使用双手轻武器（手杖和长枪），支持所有宗派，缺点是攻击动画不合拍
+BEGIN @195 //允许武僧在所有武器上投入2颗星（专精掌握）
 FORBID_COMPONENT "Setup-improvedMonk.tp2" "1" @109	//已经安装了旧版
+SUBCOMPONENT @106	//允许武僧使用双手轻武器（手杖和长枪），支持所有宗派，缺点是攻击动画不合拍
 
 //BAND	00=>0 01=>0 11=>1
 //BOR	00=>0 01=>1 11=>1
@@ -276,6 +972,98 @@ COPY_EXISTING ~kitlist.2da~ ~override~
 							SET_2DA_ENTRY 23 (kitcol + 1) 30 ~2~
 							SET_2DA_ENTRY 27 (kitcol + 1) 30 ~2~
 							SET_2DA_ENTRY 28 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 29 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 30 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 31 (kitcol + 1) 30 ~2~
+							SET_2DA_ENTRY 32 (kitcol + 1) 30 ~3~
+						END
+					END
+				BUT_ONLY
+			END
+		END
+	END
+BUT_ONLY
+
+
+BEGIN @196 //允许武僧在所有武器上投入5颗星（大宗师掌握）
+FORBID_COMPONENT "Setup-improvedMonk.tp2" "1" @109	//已经安装了旧版
+SUBCOMPONENT @106	//允许武僧使用双手轻武器（手杖和长枪），支持所有宗派，缺点是攻击动画不合拍
+
+//BAND	00=>0 01=>0 11=>1
+//BOR	00=>0 01=>1 11=>1
+//BXOR	00=>0 01=>1 11=>0
+COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
+	READ_BYTE 0x1c wpcate	//读取武器类型
+	READ_BYTE 0x31 wpprof	//读取武器熟练
+	READ_SHORT 0x22 wpapp	//读取武器外形
+	PATCH_IF (wpcate = 26) OR (wpprof = 102) BEGIN	//武器类型或武器掌握是手杖
+		READ_BYTE 0x18 wpflags1
+		READ_BYTE 0x19 wpflags2
+		READ_BYTE 0x20 wpuse
+		PATCH_IF (((wpflags1 BAND 0b00000110) = 0b00000110) OR ((wpflags2 BAND 0b00010000) = 0b00010000)) AND ((wpuse BAND 0b01000000) = 0) BEGIN // 可移动，双手或伪双手，盗贼可用
+			WRITE_BYTE 0x21 (THIS BAND 0b11011111)	//BIT5归0其它不变，武僧可用
+			PATCH_IF (wpapp = 21329) BEGIN	//动画是手杖，修改挥舞动画
+				READ_SHORT 0x68 wpheads	//读取物品能力数
+					FOR (wpability = 0 ; wpability < wpheads ; ++wpability) BEGIN
+						READ_BYTE ( 0x72 + 0x38 * wpability ) wpheadtype
+						READ_BYTE ( 0x74 + 0x38 * wpability ) wpheadlocation
+						PATCH_IF ( wpheadtype = 1 ) & ( wpheadlocation = 1 ) BEGIN //近战
+							WRITE_SHORT ( 0x9e + 0x38 * wpability ) 20
+							WRITE_SHORT ( 0xa0 + 0x38 * wpability ) 70
+							WRITE_SHORT ( 0xa2 + 0x38 * wpability ) 10
+						END
+					END
+			END
+		END
+	END
+	PATCH_IF (wpcate = 29) OR (wpprof = 98) BEGIN	//武器类型或武器掌握是长矛
+		READ_BYTE 0x18 wpflags1
+		READ_BYTE 0x19 wpflags2
+		READ_BYTE 0x20 wpuse
+		PATCH_IF (((wpflags1 BAND 0b00000110) = 0b00000110) OR ((wpflags2 BAND 0b00010000) = 0b00010000)) AND ((wpuse BAND 0b00110011) = 0) BEGIN // 可移动，双手或伪双手，勇士类可用
+			WRITE_BYTE 0x21 (THIS BAND 0b11011111)	//BIT5归0其它不变，武僧可用
+			PATCH_IF (wpapp = 20563) BEGIN	//动画是长矛，修改挥舞动画
+				READ_SHORT 0x68 wpheads	//读取物品能力数
+					FOR (wpability = 0 ; wpability < wpheads ; ++wpability) BEGIN
+						READ_BYTE ( 0x72 + 0x38 * wpability ) wpheadtype
+						READ_BYTE ( 0x74 + 0x38 * wpability ) wpheadlocation
+						PATCH_IF ( wpheadtype = 1 ) & ( wpheadlocation = 1 ) BEGIN //近战
+							WRITE_SHORT ( 0x9e + 0x38 * wpability ) 10
+							WRITE_SHORT ( 0xa0 + 0x38 * wpability ) 20
+							WRITE_SHORT ( 0xa2 + 0x38 * wpability ) 70
+						END
+					END
+			END
+		END
+	END
+BUT_ONLY
+
+//武僧可以在手杖、长枪和各武器流派投入技能点
+COPY_EXISTING ~kitlist.2da~ ~override~
+	COUNT_2DA_ROWS 10 kitsmax
+	FOR (kitrow = 2 ; kitrow < kitsmax + 1 ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 8 9 readclass
+		PATCH_IF (%readclass% = 20) BEGIN	//寻找武僧宗派
+			READ_2DA_ENTRY kitrow 1 9 "kitname"	//记下名称
+			//PATCH_PRINT "%kitname%"
+			INNER_ACTION BEGIN	//处理非高阶技能列表
+				COPY_EXISTING ~weapprof.2da~ ~override~
+					COUNT_2DA_COLS kitsmaxl
+					FOR (kitcol = 0 ; kitcol < (kitsmaxl - 1) ; ++kitcol) BEGIN
+						READ_2DA_ENTRY 0 kitcol 30 kitnamel
+						PATCH_IF ("%kitnamel%" STRING_COMPARE_CASE "%kitname%" = 0) OR ("%kitnamel%" STRING_COMPARE_CASE "MONK" = 0) BEGIN
+							//PATCH_PRINT "%kitnamel%"
+						//宗派名称和kitlist中相符，为武僧宗派。无宗派武僧也要处理
+							SET_2DA_ENTRY 10 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 11 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 14 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 15 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 16 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 18 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 19 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 23 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 27 (kitcol + 1) 30 ~5~
+							SET_2DA_ENTRY 28 (kitcol + 1) 30 ~5~
 							SET_2DA_ENTRY 29 (kitcol + 1) 30 ~2~
 							SET_2DA_ENTRY 30 (kitcol + 1) 30 ~2~
 							SET_2DA_ENTRY 31 (kitcol + 1) 30 ~2~
@@ -373,13 +1161,38 @@ COPY_EXISTING ~KITLIST.2DA~ ~override~
 		END
 	END
 BUT_ONLY
+ACTION_IF FILE_EXISTS_IN_GAME ~BGCLATXT.2DA~ THEN BEGIN
+	COPY_EXISTING ~BGCLATXT.2DA~ ~override~
+		COUNT_2DA_ROWS 9 kitsmax
+		FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 0 9 readkit
+			PATCH_IF ("%readkit%" STRING_COMPARE_CASE "WIZARD_SLAYER" = 0) BEGIN
+			READ_2DA_ENTRY kitrow 4 9 desc_strref	//224285
+				PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+					GET_STRREF desc_strref desc	//原描述文本
+					//PATCH_PRINT ~%desc%~
+					INNER_PATCH_SAVE newdesc ~%desc%~ BEGIN	//新的描述文本
+						SPRINT matchdesc @221
+						SPRINT adddesc  @222
+						REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+					END
+					//PATCH_PRINT ~%newdesc%~
+					INNER_ACTION BEGIN
+						STRING_SET_EVALUATE desc_strref ~%newdesc%~
+					END
+				END
+			END
+		END
+	BUT_ONLY
+END
 
 //处理技能列表
-ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%wsability%.2DA~ ~AP_SH#IWS0~) THEN BEGIN
-	APPEND ~%wsability%.2da~ ~ABILITYX AP_SH#IWS0 AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** **** CDREPLACE~
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%wsability%.2DA~ ~AP_SY#IWS0~) THEN BEGIN
+	APPEND ~%wsability%.2da~ ~ABILITYX AP_SY#IWS0 AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** AP_SPCL131 **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** CDREPLACE
+ABILITYY GA_SY#IWS4 **** **** **** GA_SY#IWS4 **** **** **** **** GA_SY#IWS4 **** **** **** **** GA_SY#IWS4 **** **** **** **** GA_SY#IWS4 **** **** **** **** GA_SY#IWS4 **** **** **** **** GA_SY#IWS4 **** **** **** **** GA_SY#IWS4 CDREPLACE~
 	COPY_EXISTING ~%wsability%.2da~ ~override~
 		COUNT_2DA_COLS cols
-		FOR (index = 22 ; index < cols ; ++index) BEGIN
+		FOR (index = 37 ; index < cols ; ++index) BEGIN
 			REPLACE_TEXTUALLY ~CDREPLACE~ ~**** CDREPLACE~
 		END
 		REPLACE_TEXTUALLY ~CDREPLACE~ ~****~
@@ -419,7 +1232,7 @@ COPY_EXISTING ~luabbr.2da~ ~override~
 	END
 BUT_ONLY
 
-ACTION_IF NOT FILE_CONTAINS_EVALUATED (~LU%wsabbrev%.2DA~ ~AP_SH#IWS1~) THEN BEGIN
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~LU%wsabbrev%.2DA~ ~AP_SY#IWS1~) THEN BEGIN
 	COPY_EXISTING ~LU%wsabbrev%.2da~ ~override~
 		COUNT_2DA_ROWS ~9~ "rows"
 		SET "patch" = 0
@@ -427,22 +1240,22 @@ ACTION_IF NOT FILE_CONTAINS_EVALUATED (~LU%wsabbrev%.2DA~ ~AP_SH#IWS1~) THEN BEG
 			READ_2DA_ENTRY "%index%" 1 9 "abil"
 			PATCH_IF "%abil%" STRING_COMPARE_CASE "*" = 0 BEGIN	//遇到空行，加上新高阶
 				PATCH_IF (patch == 2) BEGIN
-					SET_2DA_ENTRY "%index%" 1 9 ~GA_SH#IWS3~
+					SET_2DA_ENTRY "%index%" 1 9 ~GA_SY#IWS3~
 					SET_2DA_ENTRY "%index%" 4 9 ~1~
 					SET_2DA_ENTRY "%index%" 5 9 ~99~
 					SET_2DA_ENTRY "%index%" 6 9 ~1~
-					SET_2DA_ENTRY "%index%" 7 9 ~GA_SH#IWS2~
+					SET_2DA_ENTRY "%index%" 7 9 ~GA_SY#IWS2~
 					SET "index" = "%rows%" + 1 // kills loop
 				END
 				PATCH_IF (patch == 1) BEGIN
-					SET_2DA_ENTRY "%index%" 1 9 ~GA_SH#IWS2~
+					SET_2DA_ENTRY "%index%" 1 9 ~GA_SY#IWS2~
 					SET_2DA_ENTRY "%index%" 4 9 ~1~
 					SET_2DA_ENTRY "%index%" 5 9 ~99~
 					SET_2DA_ENTRY "%index%" 6 9 ~20~
 					SET "patch" = 2
 				END
 				PATCH_IF (patch == 0) BEGIN
-					SET_2DA_ENTRY "%index%" 1 9 ~AP_SH#IWS1~
+					SET_2DA_ENTRY "%index%" 1 9 ~AP_SY#IWS1~
 					SET_2DA_ENTRY "%index%" 4 9 ~1~
 					SET_2DA_ENTRY "%index%" 5 9 ~99~
 					SET_2DA_ENTRY "%index%" 6 9 ~1~
@@ -453,40 +1266,49 @@ ACTION_IF NOT FILE_CONTAINS_EVALUATED (~LU%wsabbrev%.2DA~ ~AP_SH#IWS1~) THEN BEG
 	BUT_ONLY
 END
 
-ADD_PROJECTILE ~%MOD_FOLDER%/improvedwizardslayer/pro/SH#IWS1.pro~
-ADD_PROJECTILE ~%MOD_FOLDER%/improvedwizardslayer/pro/SH#IWS2.pro~
+ADD_PROJECTILE ~%MOD_FOLDER%/improvedwizardslayer/pro/SY#IWS1.pro~
+ADD_PROJECTILE ~%MOD_FOLDER%/improvedwizardslayer/pro/SY#IWS2.pro~
 
 COPY ~%MOD_FOLDER%/improvedwizardslayer/eff/~ ~override~
 COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/noname/~ ~override~
 
 //杀手之威，被法师杀手接近到4呎范围内的敌方施法者需要每轮对死亡进行豁免检定，失败则在本轮内遭受施法速度减少（1点+1点/6个法师杀手等级）、施法等级减少（1点/2个法师杀手等级）的惩罚。法师杀手每提升4个等级都会使检定难度提升1点（初始以+4有利进行检定）。
 
-COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS0B.spl~ ~override~
-WRITE_SHORT   0x98 ~%SH#IWS1%~
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SY#IWS0B.spl~ ~override~
+WRITE_SHORT   0x98 ~%SY#IWS1%~
 
-COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS0C.spl~ ~override~
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SY#IWS0C.spl~ ~override~
 LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 139 parameter1 = RESOLVE_STR_REF(@251) END	//遭法师杀手压制
+LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 9 duration = 200 END
+LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 99 duration = 200 END
+LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 189 parameter1 = "-5" duration = 200 END
+LPF ALTER_SPELL_EFFECT INT_VAR match_opcode = 191 duration = 200 END
 
-COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS1.spl~ ~override~
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SY#IWS1.spl~ ~override~
 SAY NAME1 @231
 SAY UNIDENTIFIED_DESC @241
 //威名远播：传奇法师杀手的威名震动费伦大陆的每一个奥术使用者。敌对施法者被法师杀手影响施法速度和施法等级的有效距离扩展到30呎。
 
-COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS2.spl~ ~override~
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SY#IWS2.spl~ ~override~
 SAY NAME1 @232
 SAY UNIDENTIFIED_DESC @242
 //绝对防护：传奇法师杀手能够激发出潜力以短暂保护自身的有益状态不受魔法的驱离。这个能力让法师杀手在一轮时间内免受任何防护系和破魔系法术的影响，包括解除魔法、破解术、降低抗力等等。
 
-COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS3.spl~ ~override~
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SY#IWS3.spl~ ~override~
 SAY NAME1 @233
 SAY UNIDENTIFIED_DESC @243
 //禁魔领域：传奇法师杀手能够在一天内收集所有能干扰到法术的因子，并将其一次性释放出来。这个能力使法师杀手附近变成死魔法区并持续1回合之久，在此期间无论敌友都无法施展法术，法术以外的技能则不会受到影响。
 
-COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SH#IWS3A.spl~ ~override~
-WRITE_SHORT   0x98 ~%SH#IWS2%~
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SY#IWS4.spl~ ~override~
+SAY NAME1 @234
+SAY UNIDENTIFIED_DESC @244
+//法术击破，法师杀手每提升五个等级，每天可以多使用一次破解法师防御的能力，该能力可以解除对手身上的一个战斗防护和一个特殊防护。
+
+COPY ~%MOD_FOLDER%/improvedwizardslayer/spl/SY#IWS3A.spl~ ~override~
+WRITE_SHORT   0x98 ~%SY#IWS2%~
 
 BEGIN @202	//允许法师杀手正常使用药水
-REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~SH#IWS0.spl~ @212
+REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~SY#IWS0.spl~ @212
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
 	READ_SHORT 0x1c	itemtype
@@ -502,7 +1324,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
 BUT_ONLY
 
 BEGIN @203	//允许法师杀手正常使用护腕、腰带和斗篷，以及所有法师不能用但战士职业可用的物品
-REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~SH#IWS0.spl~ @212
+REQUIRE_PREDICATE FILE_EXISTS_IN_GAME ~SY#IWS0.spl~ @212
 
 COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
 	READ_SHORT 0x1c	itemtype
@@ -510,7 +1332,7 @@ COPY_EXISTING_REGEXP GLOB ~^.+\.itm$~ ~override~
 	READ_BYTE 0x1f classusef
 	READ_BYTE 0x20 classusem
 	READ_BYTE 0x2f kituse
-	PATCH_IF (itemtype == 3) OR (itemtype == 6) OR (itemtype == 32) OR ( (classusem & 0b00000100) = 0b00000100 ) BEGIN	// 护腕、腰带和斗篷，或者法师不可用
+	PATCH_IF ((itemtype == 3)||(itemtype == 6)||(itemtype == 32)||( (classusem & 0b00000100) = 0b00000100 )) BEGIN	// 护腕、腰带和斗篷，或者法师不可用
 		PATCH_IF ( (itemflags & 0b00000100) = 0b00000100 ) && ( (classusef & 0b11110111) = 0 ) && ( (kituse & 0b00000010) = 0b00000010 ) BEGIN	// 可移动，战士可用，法猎不可用
 			WRITE_BYTE 0x2f (kituse & 0b11111101)	//法猎可用
 		END
@@ -528,49 +1350,53 @@ BEGIN @301
 REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @320	//版本不对
 FORBID_COMPONENT "SETUP-shaman_hauler.tp2" "0" @321	//已经安装了旧版
 
-//SHAM#HL0.bam	空bam
-//SHAM#HLA.bam	萨满舞蹈图标
-//SHAM#HLB.bam	萨满舞蹈图标改
-//SHAM#HLC.bam	搬运图标
-//SHAM#HLD.bam	搬运图标改
+//SY#ISHM0.bam	空bam
+//SY#ISHMA.bam	萨满舞蹈图标
+//SY#ISHMB.bam	萨满舞蹈图标改
+//SY#ISHMC.bam	搬运图标
+//SY#ISHMD.bam	搬运图标改
 COPY ~%MOD_FOLDER%/shaman_hauler/bam~ ~override~
 
-//SHAM#HLA/B.cre	鸟，承载脚本
+//SY#ISHMA/B.cre	鸟，承载脚本
 COPY ~%MOD_FOLDER%/shaman_hauler/cre~ ~override~
 
-//SHAM#HL1.spl	萨满新增技能，给其他人加上技能SHAM#HL3
-COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL1.spl~ ~override~
+//SY#ISHM1.spl	萨满新增技能，给其他人加上技能SY#ISHM3
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SY#ISHM1.spl~ ~override~
 SAY NAME1 @302
 SAY UNIDENTIFIED_DESC @303
 
-//SHAM#HL2.spl	萨满新增高阶技能，给其他人加上技能SHAM#HL4
-COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL2.spl~ ~override~
+//SY#ISHM2.spl	萨满新增高阶技能，给其他人加上技能SY#ISHM4
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SY#ISHM2.spl~ ~override~
 SAY NAME1 @304
 SAY UNIDENTIFIED_DESC @305
 
-//SHAM#HL3.spl	普通搬运，全局变量SHAM#HL1和局部变量SHAM#HLA变1，延迟6秒再SHAM#HL5.spl恢复此技能
-COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL3.spl~ ~override~
+//SY#ISHM3.spl	普通搬运，全局变量SY#ISHM1和局部变量SY#ISHMA变1，延迟6秒再SY#ISHM5.spl恢复此技能
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SY#ISHM3.spl~ ~override~
 SAY NAME1 @306
 SAY UNIDENTIFIED_DESC @307
 
-//SHAM#HL4.spl	传送搬运，延迟1秒传送自身，全局变量SHAM#HL2和局部变量SHAM#HLB变1，调用SHAM#HL6.spl
-COPY ~%MOD_FOLDER%/shaman_hauler/spl/SHAM#HL4.spl~ ~override~
+//SY#ISHM4.spl	传送搬运，延迟1秒传送自身，全局变量SY#ISHM2和局部变量SY#ISHMB变1，调用SY#ISHM6.spl
+COPY ~%MOD_FOLDER%/shaman_hauler/spl/SY#ISHM4.spl~ ~override~
 SAY NAME1 @308
 SAY UNIDENTIFIED_DESC @309
 
-//SHAM#HL5.spl	永久给SHAM#HL3.spl，局部变量SHAM#HLA归零
-//SHAM#HL6.spl	延迟6秒调用SHAM#HL9.spl，为了不和SHAM#HL4.spl一起被SHAM#HL7.spl移除
-//SHAM#HL7.spl	对全队人员移除SHAM#HL4.spl打断传送
-//SHAM#HL8.spl	局部变量归零
-//SHAM#HL9.spl	永久给SHAM#HL4.spl
+//SY#ISHM5.spl	永久给SY#ISHM3.spl，局部变量SY#ISHMA归零
+//SY#ISHM6.spl	延迟6秒调用SY#ISHM9.spl，为了不和SY#ISHM4.spl一起被SY#ISHM7.spl移除
+//SY#ISHM7.spl	对全队人员移除SY#ISHM4.spl打断传送
+//SY#ISHM8.spl	局部变量归零
+//SY#ISHM9.spl	永久给SY#ISHM4.spl
 COPY ~%MOD_FOLDER%/shaman_hauler/spl/noname~ ~override~
 
-//SHAM#HLA/B.baf	鸟的脚本
-COMPILE ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HLA.baf~
-COMPILE ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HLB.baf~
+//SY#ISHMA/B.baf	鸟的脚本
+COMPILE ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHMA.baf~
+COMPILE ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHMB.baf~
 
-//召唤生物在萨满被搬运出视线外的时候会跟着走
-EXTEND_TOP ~bdshunsu.BCS~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL0.baf~
+//召唤生物在萨满被搬运的时候会跟着走
+EXTEND_TOP ~bdshunsu.BCS~ ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHM0.baf~
+
+//召唤生物别太挤了
+COPY_EXISTING ~bdshunsu.bcs~ ~override~
+R_B_B ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHMU.baf~ ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHMV.baf~ ON_MISMATCH END
 
 //全局脚本产生鸟
 COPY_EXISTING ~CAMPAIGN.2da~ ~override~
@@ -584,7 +1410,7 @@ COPY_EXISTING ~CAMPAIGN.2da~ ~override~
 			READ_2DA_ENTRY camprows 1 10 campscript	//WORLDSCRIPT名称
 				PATCH_IF "%campscript%added" = 0 BEGIN
 					INNER_ACTION BEGIN
-						EXTEND_TOP ~%campscript%.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
+						EXTEND_TOP ~%campscript%.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHM.baf~
 					END
 					SET "%campscript%added" = 1
 				END
@@ -592,18 +1418,18 @@ COPY_EXISTING ~CAMPAIGN.2da~ ~override~
 	END
 	PATCH_IF FILE_EXISTS_IN_GAME ~baldur.bcs~ BEGIN
 		INNER_ACTION BEGIN
-			EXTEND_TOP ~baldur.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
+			EXTEND_TOP ~baldur.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHM.baf~
 		END
 	END
 	PATCH_IF FILE_EXISTS_IN_GAME ~baldur25.bcs~ BEGIN
 		INNER_ACTION BEGIN
-			EXTEND_TOP ~baldur25.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SHAM#HL.baf~
+			EXTEND_TOP ~baldur25.bcs~ ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHM.baf~
 		END
 	END
 BUT_ONLY
 
 //萨满升级获得技能
-APPEND ~CLABSH01.2da~ ~ABILITYS GA_SHAM#HL1 **** **** **** **** **** **** **** **** **** **** **** **** CDREPLACE~
+APPEND ~CLABSH01.2da~ ~ABILITYS GA_SY#ISHM1 **** **** **** **** **** **** **** **** **** **** **** **** CDREPLACE~
 COPY_EXISTING ~CLABSH01.2da~ ~override~
   COUNT_2DA_COLS cols
   FOR (index = 15 ; index < cols ; ++index) BEGIN
@@ -620,7 +1446,7 @@ COPY_EXISTING ~lush0.2da~ ~override~
     READ_2DA_ENTRY "%index%" 1 9 "abil"	//循环读取第二列每个值
     PATCH_IF ("%abil%" STRING_COMPARE_CASE "*" = 0) BEGIN	//如果这一列是空的
       PATCH_IF ("%patch%" = 0) BEGIN
-        SET_2DA_ENTRY "%index%" 1 9 ~GA_SHAM#HL2~
+        SET_2DA_ENTRY "%index%" 1 9 ~GA_SY#ISHM2~
         SET_2DA_ENTRY "%index%" 4 9 ~1~
         SET_2DA_ENTRY "%index%" 5 9 ~99~
         SET_2DA_ENTRY "%index%" 6 9 ~1~
@@ -633,12 +1459,19 @@ COPY_EXISTING ~lush0.2da~ ~override~
 BUT_ONLY
 
 
-BEGIN @322	//萨满召唤的生物可以控制
+BEGIN @322	//萨满召唤的生物可以控制，且萨满在跳舞时可以立刻停下施法
 REQUIRE_PREDICATE GAME_IS ~bgee bg2ee eet~ OR FILE_EXISTS_IN_GAME BD1000.are @320	//版本不对
 
 COPY_EXISTING ~bdspirim.ITM~ ~override~  ~bdspnaim.ITM~ ~override~
 LPF DELETE_ITEM_EQEFFECT INT_VAR opcode_to_delete = 365 END
 
+COPY_EXISTING ~bdsum00.bcs~ ~override~
+R_B_B ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHMX.baf~ ~%MOD_FOLDER%/shaman_hauler/baf/SY#ISHMY.baf~ ON_MISMATCH END
+
+COPY_EXISTING ~spsh003.SPL~ ~override~
+LPF ADD_SPELL_EFFECT INT_VAR opcode = 363 insert_point = 0 target = 1 duration = 7 special = 5 END
+LPF DELETE_SPELL_EFFECT INT_VAR opcode = 144 END
+LPF DELETE_SPELL_EFFECT INT_VAR opcode = 145 END
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -674,10 +1507,184 @@ COPY_EXISTING ~KITLIST.2DA~ ~override~
 		END
 	END
 BUT_ONLY
+ACTION_IF FILE_EXISTS_IN_GAME ~BGCLATXT.2DA~ THEN BEGIN
+	COPY_EXISTING ~BGCLATXT.2DA~ ~override~
+		COUNT_2DA_ROWS 9 kitsmax
+		FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 0 9 readkit
+			PATCH_IF ("%readkit%" STRING_COMPARE_CASE "BEASTMASTER" = 0) BEGIN
+			READ_2DA_ENTRY kitrow 4 9 desc_strref
+				PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+					GET_STRREF desc_strref desc	//原描述文本
+					INNER_PATCH_SAVE newdesc ~%desc%~ BEGIN	//新的描述文本
+						SPRINT matchdesc @421
+						SPRINT adddesc  @422
+						REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+					END
+					INNER_ACTION BEGIN
+						STRING_SET_EVALUATE desc_strref ~%newdesc%~
+					END
+				END
+			END
+		END
+	BUT_ONLY
+END
+
+ADD_PROJECTILE ~%MOD_FOLDER%/improvedbeastmaster/pro/SY#IBM0.pro~
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/2da~ ~override~
+
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~MCHIA1.BAM~ BEGIN
+	COPY ~%MOD_FOLDER%/improvedbeastmaster/anim/chimera~ ~override~
+END
+ACTION_IF NOT FILE_EXISTS_IN_GAME ~MYETA1.BAM~ BEGIN
+	COPY ~%MOD_FOLDER%/improvedbeastmaster/anim/yeti~ ~override~
+END
+
+COPY_EXISTING ~CAMPAIGN.2da~ ~override~
+	COUNT_2DA_ROWS 10 camprowmax	//至少10列column，row行数读入camprowmax
+	PATCH_IF camprowmax > 1 BEGIN
+		FOR (camprows = 1 ; camprows < camprowmax ; ++camprows) BEGIN
+			READ_2DA_ENTRY camprows 1 10 campscript	//WORLDSCRIPT名称
+			SET "%campscript%added" = 0
+		END
+		FOR (camprows = 1 ; camprows < camprowmax ; ++camprows) BEGIN
+			READ_2DA_ENTRY camprows 1 10 campscript	//WORLDSCRIPT名称
+				PATCH_IF "%campscript%added" = 0 BEGIN
+					INNER_ACTION BEGIN
+						EXTEND_TOP ~%campscript%.bcs~ ~%MOD_FOLDER%/improvedbeastmaster/baf/area.baf~
+						EXTEND_TOP ~%campscript%.bcs~ ~%MOD_FOLDER%/improvedbeastmaster/baf/rest.baf~
+					END
+					SET "%campscript%added" = 1
+				END
+		END
+	END
+	PATCH_IF FILE_EXISTS_IN_GAME ~baldur.bcs~ BEGIN
+		INNER_ACTION BEGIN
+			EXTEND_TOP ~baldur.bcs~ ~%MOD_FOLDER%/improvedbeastmaster/baf/area.baf~
+			EXTEND_TOP ~baldur.bcs~ ~%MOD_FOLDER%/improvedbeastmaster/baf/rest.baf~
+		END
+	END
+	PATCH_IF FILE_EXISTS_IN_GAME ~baldur25.bcs~ BEGIN
+		INNER_ACTION BEGIN
+			EXTEND_TOP ~baldur25.bcs~ ~%MOD_FOLDER%/improvedbeastmaster/baf/area.baf~
+			EXTEND_TOP ~baldur25.bcs~ ~%MOD_FOLDER%/improvedbeastmaster/baf/rest.baf~
+		END
+	END
+BUT_ONLY
+
+COMPILE ~%MOD_FOLDER%/improvedbeastmaster/baf/tocomp~
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMF1.cre~ ~override~
+	SAY NAME1 @461
+	SAY NAME2 @461
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMF2.cre~ ~override~
+	SAY NAME1 @462
+	SAY NAME2 @462
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMF3.cre~ ~override~
+	SAY NAME1 @463
+	SAY NAME2 @463
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMF4.cre~ ~override~
+	SAY NAME1 @464
+	SAY NAME2 @464
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMA1.cre~ ~override~
+	SAY NAME1 @465
+	SAY NAME2 @465
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMA2.cre~ ~override~
+	SAY NAME1 @466
+	SAY NAME2 @466
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMS1.cre~ ~override~
+	SAY NAME1 @467
+	SAY NAME2 @467
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMS2.cre~ ~override~
+	SAY NAME1 @468
+	SAY NAME2 @468
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMC1.cre~ ~override~
+	SAY NAME1 @469
+	SAY NAME2 @469
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMC2.cre~ ~override~
+	SAY NAME1 @470
+	SAY NAME2 @470
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMB1.cre~ ~override~
+	SAY NAME1 @471
+	SAY NAME2 @471
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMB2.cre~ ~override~
+	SAY NAME1 @472
+	SAY NAME2 @472
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/cre/SY#IBMW1.cre~ ~override~
+	SAY NAME1 @473
+	SAY NAME2 @473
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/eff~ ~override~
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/itm/SY#IBMF0.itm~ ~override~ ~%MOD_FOLDER%/improvedbeastmaster/itm/SY#IBMF1.itm~ ~override~ ~%MOD_FOLDER%/improvedbeastmaster/itm/SY#IBMS1.itm~ ~override~
+	SAY NAME2 @427
+	SAY IDENTIFIED_DESC @427
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/itm/SY#IBMA0.itm~ ~override~ ~%MOD_FOLDER%/improvedbeastmaster/itm/SY#IBMA2.itm~ ~override~
+	SAY NAME2 @428
+	SAY IDENTIFIED_DESC @428
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/itm/SY#IBMC1.itm~ ~override~
+	SAY NAME2 @429
+	SAY IDENTIFIED_DESC @429
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM0A.spl~ ~override~
+	WRITE_SHORT   0x98 ~%SY#IBM0%~
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM0C.spl~ ~override~
+	LPF ALTER_SPELL_EFFECT INT_VAR opcode = 139 parameter1 = RESOLVE_STR_REF(@420) END
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM1.spl~ ~override~
+	SAY NAME1 @423
+	SAY UNIDENTIFIED_DESC @424
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM1F.spl~ ~override~
+	SAY NAME1 @431
+	SAY UNIDENTIFIED_DESC @432
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM1A.spl~ ~override~
+	SAY NAME1 @433
+	SAY UNIDENTIFIED_DESC @434
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM1S.spl~ ~override~
+	SAY NAME1 @435
+	SAY UNIDENTIFIED_DESC @436
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM1C.spl~ ~override~
+	SAY NAME1 @437
+	SAY UNIDENTIFIED_DESC @438
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBM1B.spl~ ~override~
+	SAY NAME1 @439
+	SAY UNIDENTIFIED_DESC @440
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBMW.spl~ ~override~
+	SAY NAME1 @441
+	SAY UNIDENTIFIED_DESC @442
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SY#IBMH.spl~ ~override~
+	SAY NAME1 @451
+	SAY UNIDENTIFIED_DESC @452
+
+COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/noname~ ~override~
 
 //处理技能列表
-ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%bmability%.2DA~ ~AP_SH#BMS0~) THEN BEGIN
-	APPEND ~%bmability%.2da~ ~ABILITYX AP_SH#BMS0 **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** CDREPLACE~
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%bmability%.2DA~ ~AP_SY#IBM0~) THEN BEGIN
+	APPEND ~%bmability%.2da~ ~ABILITYX AP_SY#IBM0 **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** **** CDREPLACE
+ABILITYY GA_SY#IBM1 GA_SY#IBM1 **** GA_SY#IBM1 **** GA_SY#IBM1 **** GA_SY#IBM1 **** GA_SY#IBM1 **** GA_SY#IBM1 **** GA_SY#IBM1 **** GA_SY#IBM1 **** GA_SY#IBM1 **** **** CDREPLACE~
 	COPY_EXISTING ~%bmability%.2da~ ~override~
 		COUNT_2DA_COLS cols
 		FOR (index = 22 ; index < cols ; ++index) BEGIN
@@ -688,12 +1695,63 @@ ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%bmability%.2DA~ ~AP_SH#BMS0~) THEN BEGI
 	BUT_ONLY
 END
 
-ADD_PROJECTILE ~%MOD_FOLDER%/improvedbeastmaster/pro/SH#BMS0.pro~
-
-COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/SH#BMS0A.spl~ ~override~
-	WRITE_SHORT   0x98 ~%SH#BMS0%~
-
-COPY ~%MOD_FOLDER%/improvedbeastmaster/spl/noname~ ~override~
+//读取luabbr.2da中abbrev列，确定高阶技能列表的名称（Ra0等）
+COPY_EXISTING ~luabbr.2da~ ~override~
+	COUNT_2DA_ROWS 2 kitsmax
+	FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 0 2 kitname
+		PATCH_IF ~%kitname%~ STRING_EQUAL_CASE ~BEASTMASTER~ THEN BEGIN
+			READ_2DA_ENTRY kitrow 1 2 wsabbrev
+			PATCH_IF ~%wsabbrev%~ STRING_EQUAL_CASE ~Ra0~ THEN BEGIN	//没有单独高阶技能表格
+				PATCH_IF FILE_CONTAINS_EVALUATED (~luabbr.2da~ ~Ra4~) THEN BEGIN	//Ra4已经被占用了
+					FOR (index = 5 ; index < 10 ; ++index) BEGIN
+						PATCH_IF NOT FILE_CONTAINS_EVALUATED (~luabbr.2da~ ~Ra%index%~) THEN BEGIN	//找一个没被占用的
+							SPRINT wsabbrev ~Ra%index%~
+							SET "index" = 10 // kills loop
+						END
+					END
+					PATCH_IF index <10  THEN BEGIN	//什么鬼，5-9全占了，下面几个总能选到一个吧
+						PATCH_FOR_EACH ~abbrevname~ IN ~Rbm~ ~Ram~ ~Rab~ BEGIN
+							PATCH_IF NOT FILE_CONTAINS_EVALUATED (~luabbr.2da~ ~%abbrevname%~) THEN BEGIN
+								SPRINT wsabbrev ~%abbrevname%~
+							END
+						END
+					END
+				END ELSE BEGIN	//Ra4没被占用，就用它
+					SPRINT wsabbrev ~Ra4~
+				END
+				SET_2DA_ENTRY kitrow 1 2 ~%wsabbrev%~
+				INNER_ACTION BEGIN COPY_EXISTING_REGEXP ~LURa0.2da~ ~override/LU%wsabbrev%.2da~ END
+			END
+		END
+	END
+BUT_ONLY
+//驯兽师高阶技能
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~LU%wsabbrev%.2DA~ ~AP_SY#IWS1~) THEN BEGIN
+	COPY_EXISTING ~LU%wsabbrev%.2da~ ~override~
+		COUNT_2DA_ROWS ~9~ "rows"	//至少要9列。行数读入rows
+		SET "patch" = 0
+		FOR ( index = 1 ; index < rows ; index = index + 1 ) BEGIN
+			READ_2DA_ENTRY "%index%" 1 9 "abil"	//循环读取第二列每个值
+			PATCH_IF ("%abil%" STRING_COMPARE_CASE "*" = 0) BEGIN	//如果这一列是空的			
+				PATCH_IF (patch == 1) BEGIN
+					SET_2DA_ENTRY "%index%" 1 9 ~AP_SY#IBME~
+					SET_2DA_ENTRY "%index%" 4 9 ~1~
+					SET_2DA_ENTRY "%index%" 5 9 ~99~
+					SET_2DA_ENTRY "%index%" 6 9 ~7~
+					SET "patch" = 2
+				END
+				PATCH_IF (patch == 0) BEGIN
+					SET_2DA_ENTRY "%index%" 1 9 ~GA_SY#IBMW~
+					SET_2DA_ENTRY "%index%" 4 9 ~1~
+					SET_2DA_ENTRY "%index%" 5 9 ~99~
+					SET_2DA_ENTRY "%index%" 6 9 ~1~
+					SET "patch" = 1
+				END
+			END
+		END
+	BUT_ONLY
+END
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -731,9 +1789,9 @@ COPY_EXISTING ~kitlist.2da~ ~override~
 	END
 BUT_ONLY
 //COMPILE EVALUATE_BUFFER ~%MOD_FOLDER%/prestigedragondisciple/baf/ADD0.d~
-COPY ~%MOD_FOLDER%/prestigedragondisciple/dlg/ADD0.d~ ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~
+COPY ~%MOD_FOLDER%/prestigedragondisciple/dlg/ADD0.d~ ~%MOD_FOLDER%/prestigedragondisciple/dlg/SY#IPD0.d~
 
-COPY ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~ ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~
+COPY ~%MOD_FOLDER%/prestigedragondisciple/dlg/SY#IPD0.d~ ~%MOD_FOLDER%/prestigedragondisciple/dlg/SY#IPD0.d~
 	PHP_EACH magekit AS kitid => lowername BEGIN
 	//PATCH_PRINT ~%kitid% %lowername%~
 		REPLACE_TEXTUALLY ~~~~~IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),MAGE) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~
@@ -803,10 +1861,10 @@ IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),MONK) ClearActions(LastSu
 IF ~~ THEN REPLY @532 DO ~ChangeClass(LastSummonerOf(),SHAMAN) ClearActions(LastSummonerOf()) ActionOverride(LastSummonerOf(),AddKit(0)) SetGlobal("dualclassed","LOCALS",1)~ EXIT~~~~~ EVALUATE_BUFFER
 	END
 
-COMPILE ~%MOD_FOLDER%/prestigedragondisciple/dlg/SH#PDD0.d~
-COMPILE ~%MOD_FOLDER%/prestigedragondisciple/baf/SH#PDD0.baf~
+COMPILE ~%MOD_FOLDER%/prestigedragondisciple/dlg/SY#IPD0.d~
+COMPILE ~%MOD_FOLDER%/prestigedragondisciple/baf/SY#IPD0.baf~
 
-COPY ~%MOD_FOLDER%/prestigedragondisciple/spl/SH#PDD1.spl~ ~override~	//转职启动
+COPY ~%MOD_FOLDER%/prestigedragondisciple/spl/SY#IPD1.spl~ ~override~	//转职启动
 SAY NAME1 @503
 SAY UNIDENTIFIED_DESC @504
 
@@ -838,10 +1896,32 @@ COPY_EXISTING ~KITLIST.2DA~ ~override~
 		END
 	END
 BUT_ONLY
+ACTION_IF FILE_EXISTS_IN_GAME ~BGCLATXT.2DA~ THEN BEGIN
+	COPY_EXISTING ~BGCLATXT.2DA~ ~override~
+		COUNT_2DA_ROWS 9 kitsmax
+		FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 0 9 readkit
+			PATCH_IF ("%readkit%" STRING_COMPARE_CASE "DRAGON_DISCIPLE" = 0) BEGIN
+			READ_2DA_ENTRY kitrow 4 9 desc_strref
+				PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+					GET_STRREF desc_strref desc	//原描述文本
+					INNER_PATCH_SAVE newdesc ~%desc%~ BEGIN	//新的描述文本
+						SPRINT matchdesc @505
+						SPRINT adddesc  @506
+						REPLACE_TEXTUALLY ~%matchdesc%~ ~%adddesc%~
+					END
+					INNER_ACTION BEGIN
+						STRING_SET_EVALUATE desc_strref ~%newdesc%~
+					END
+				END
+			END
+		END
+	BUT_ONLY
+END
 
 //处理技能列表
-ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%ddability%.2DA~ ~GA_SH#PDD1~) THEN BEGIN
-	APPEND ~%ddability%.2da~ ~ABILITYX **** **** **** **** **** **** **** **** **** **** **** **** **** **** GA_SH#PDD1 **** **** **** **** **** CDREPLACE~
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%ddability%.2DA~ ~GA_SY#IPD1~) THEN BEGIN
+	APPEND ~%ddability%.2da~ ~ABILITYX **** **** **** **** **** **** **** **** **** **** **** **** **** **** GA_SY#IPD1 **** **** **** **** **** CDREPLACE~
 	COPY_EXISTING ~%ddability%.2da~ ~override~
 		COUNT_2DA_COLS cols
 		FOR (index = 22 ; index < cols ; ++index) BEGIN
@@ -864,7 +1944,7 @@ COPY_EXISTING ~kitlist.2da~ ~override~
 		PATCH_IF ("%readkit%" STRING_COMPARE_CASE "DRAGON_DISCIPLE" = 0) BEGIN
 		READ_2DA_ENTRY kitrow 5 9 ddability
 		READ_2DA_ENTRY kitrow 4 9 desc_strref
-			PATCH_IF FILE_EXISTS_IN_GAME ~SH#PDD0.bcs~ BEGIN
+			PATCH_IF FILE_EXISTS_IN_GAME ~SY#IPD0.bcs~ BEGIN
 				PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
 					INNER_ACTION BEGIN
 						STRING_SET_EVALUATE desc_strref @508
@@ -884,6 +1964,34 @@ COPY_EXISTING ~kitlist.2da~ ~override~
 		END
 	END
 BUT_ONLY
+ACTION_IF FILE_EXISTS_IN_GAME ~BGCLATXT.2DA~ THEN BEGIN
+	COPY_EXISTING ~BGCLATXT.2DA~ ~override~
+		COUNT_2DA_ROWS 9 kitsmax
+		FOR (kitrow = 0 ; kitrow < kitsmax ; ++kitrow) BEGIN
+		READ_2DA_ENTRY kitrow 0 9 readkit
+			PATCH_IF ("%readkit%" STRING_COMPARE_CASE "DRAGON_DISCIPLE" = 0) BEGIN
+			READ_2DA_ENTRY kitrow 4 9 desc_strref
+				PATCH_IF FILE_EXISTS_IN_GAME ~SY#IPD0.bcs~ BEGIN
+					PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+						INNER_ACTION BEGIN
+							STRING_SET_EVALUATE desc_strref @508
+						END
+					END ELSE BEGIN
+						SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(@508)
+					END
+				END ELSE BEGIN
+					PATCH_IF (desc_strref >= 0 && desc_strref < 2147483646) BEGIN
+						INNER_ACTION BEGIN
+							STRING_SET_EVALUATE desc_strref @507
+						END
+					END ELSE BEGIN
+						SET_2DA_ENTRY kitrow 4 9 RESOLVE_STR_REF(@507)
+					END
+				END
+			END
+		END
+	BUT_ONLY
+END
 /*
 COPY_EXISTING ~kitlist.2da~ ~override~
 	COUNT_2DA_ROWS 9 kitsmax
@@ -937,9 +2045,9 @@ BUT_ONLY
 */
 
 //处理技能列表
-//SH#PDD1转职技能 SH#PDD2+10HP SH#PDD3+1力量 SH#PDD4+30HP SH#PDD5+1智力 SH#PDD6+2力量+1魅力+免疫
-ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%ddability%.2DA~ ~AP_SH#PDD6~) THEN BEGIN
-	APPEND ~%ddability%.2da~ ~ABILITYY **** **** **** AP_SH#PDD3 **** **** **** AP_SH#PDD3 **** AP_SH#PDD4 **** **** **** **** **** **** **** AP_SH#PDD5 **** AP_SH#PDD6 CDREPLACE~
+//SY#IPD1转职技能 SY#IPD2+10HP SY#IPD3+1力量 SY#IPD4+30HP SY#IPD5+1智力 SY#IPD6+2力量+1魅力+免疫
+ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%ddability%.2DA~ ~AP_SY#IPD6~) THEN BEGIN
+	APPEND ~%ddability%.2da~ ~ABILITYY **** **** **** AP_SY#IPD3 **** **** **** AP_SY#IPD3 **** AP_SY#IPD4 **** **** **** **** **** **** **** AP_SY#IPD5 **** AP_SY#IPD6 CDREPLACE~
 	COPY_EXISTING ~%ddability%.2da~ ~override~
 		COUNT_2DA_ROWS 20 rowmax
 		COUNT_2DA_COLS colmax
@@ -953,7 +2061,7 @@ ACTION_IF NOT FILE_CONTAINS_EVALUATED (~%ddability%.2DA~ ~AP_SH#PDD6~) THEN BEGI
 		FOR (abrow = 1 ; abrow < rowmax + 1 ; ++abrow) BEGIN
 			READ_2DA_ENTRY abrow 5 20 readability
 			PATCH_IF ( "%readability%" STRING_COMPARE_CASE ~AP_SPDD04~ = 0 ) BEGIN
-				SET_2DA_ENTRY abrow 5 20 ~AP_SH#PDD2~	//5级的体质+1改成最大HP+10
+				SET_2DA_ENTRY abrow 5 20 ~AP_SY#IPD2~	//5级的体质+1改成最大HP+10
 				SET abrow = rowmax + 2
 			END
 		END

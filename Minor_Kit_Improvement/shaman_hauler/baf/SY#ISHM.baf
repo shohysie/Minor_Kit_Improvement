@@ -1,0 +1,17 @@
+IF
+	Global("SY#ISHM1","GLOBAL",1)
+THEN
+	RESPONSE #100
+		CreateCreature("SY#ISHMA",[99.99],0)
+		SetGlobal("SY#ISHM1","GLOBAL",0)
+		Continue()
+END
+
+IF
+	Global("SY#ISHM2","GLOBAL",1)
+THEN
+	RESPONSE #100
+		CreateCreature("SY#ISHMB",[100.100],0)
+		SetGlobal("SY#ISHM2","GLOBAL",0)
+		Continue()
+END

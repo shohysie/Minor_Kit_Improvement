@@ -1,0 +1,14 @@
+//稍微改一下让魂灵受控制
+IF
+	Allegiance(Myself,GOODCUTOFF)
+	OR(2)
+		ActionListEmpty()
+		Specifics(Myself,SPIRIT)
+	!StateCheck(LastSeenBy(Myself),STATE_REALLY_DEAD)
+	Allegiance(LastSeenBy(Myself),EVILCUTOFF)
+	!InParty(LastSeenBy(Myself))
+	See(LastSeenBy(Myself))
+THEN
+	RESPONSE #100
+		AttackOneRound(LastSeenBy(Myself))
+END

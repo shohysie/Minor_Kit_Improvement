@@ -1,8 +1,8 @@
 //处理无宗派武僧
 
 //非高阶技能
-APPEND ~CLABMO01.2da~ ~ABILITYA **** **** **** **** **** **** GA_IPMONK09 **** **** GA_IPMONK08 **** **** **** **** GA_IPMONK08 GA_IPMONK09 **** **** **** **** **** **** **** **** GA_IPMONK09 CDREPLACE
-ABILITYB GA_IPMONK0B **** **** GA_IPMONK10 **** **** GA_IPMONK10 **** **** GA_IPMONK10 GA_IPMONK07 **** **** **** GA_IPMONK0C GA_IPMONK07 **** **** **** **** GA_IPMONK0C **** **** **** **** CDREPLACE~
+APPEND ~CLABMO01.2da~ ~ABILITYA **** **** **** **** **** **** GA_SY#IMK09 **** **** GA_SY#IMK08 **** **** **** **** GA_SY#IMK08 GA_SY#IMK09 **** **** **** **** **** **** **** **** GA_SY#IMK09 CDREPLACE
+ABILITYB GA_SY#IMK0B **** **** GA_SY#IMK10 **** **** GA_SY#IMK10 **** **** GA_SY#IMK10 GA_SY#IMK07 **** **** **** GA_SY#IMK0C GA_SY#IMK07 **** **** **** **** GA_SY#IMK0C **** **** **** **** CDREPLACE~
 COPY_EXISTING ~CLABMO01.2da~ ~override~
   COUNT_2DA_COLS cols
   FOR (index = 27; index < cols ; ++index) BEGIN
@@ -19,7 +19,7 @@ COPY_EXISTING ~LUMO0.2da~ ~override~
 	SET "alreadyfixed" = 0									
 	FOR ( index = 1 ; index < rows ; index = index + 1 ) BEGIN
 	  READ_2DA_ENTRY "%index%" 1 9 "abil"
-	  PATCH_IF ("%abil%" STRING_COMPARE_CASE "GA_IPMONK01" = 0) BEGIN	//遇到改过的
+	  PATCH_IF ("%abil%" STRING_COMPARE_CASE "GA_SY#IMK01" = 0) BEGIN	//遇到改过的
 		SET "alreadyfixed" = 1	//这个文件已经改过啦
 	  END
 	  PATCH_IF ("%abil%" STRING_COMPARE_CASE "*" = 0) & ("%alreadyfixed%" = 0) BEGIN	//遇到空行
@@ -43,7 +43,7 @@ COPY_EXISTING ~LUMO0.2da~ ~override~
 	END
 	PATCH_IF ("%alreadyfixed%" = 0) BEGIN
 		FOR ( patch = 1 ; patch < 7 ; patch = patch + 1 ) BEGIN
-			SET_2DA_ENTRY "emptyrow%patch%" 1 9 ~GA_IPMONK0%patch%~
+			SET_2DA_ENTRY "emptyrow%patch%" 1 9 ~GA_SY#IMK0%patch%~
 			SET_2DA_ENTRY "emptyrow%patch%" 4 9 ~1~
 			SET_2DA_ENTRY "emptyrow%patch%" 5 9 ~99~
 			SET_2DA_ENTRY "emptyrow%patch%" 6 9 ~20~

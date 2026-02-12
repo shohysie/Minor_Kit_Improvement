@@ -55,7 +55,7 @@ BREATH WEAPON: The Dragon Disciple breathes a gout of flame up to 30 ft. long, i
 Disadvantages:
 – May cast one fewer spell per level per day.~
 
-@510 = ~Select main class for reincarnation~
+@510 = ~Select main class for reincarnation:~
 
 @511 = ~Mage~
 @512 = ~Fighter~
@@ -69,10 +69,12 @@ Disadvantages:
 @520 = ~Monk~
 @521 = ~Shaman~
 
-@530 = ~Select specialization kit~
+@530 = ~Select specialization kit:~
 @531 = ~Reselect main class~
 @532 = ~Base Class (No Kit)~
 @533 = ~I don't need reincarnation yet.~
+@534 = ~Please confirm level/experience deduction for reincarnation. This action is irreversible and can only be done once.~
+@535 = ~Confirm.~
 
 @541 = ~^\([ %TAB%]*–[ %TAB%]*4[ %TAB%]*\)级[:：].+$~
 @542 = ~\1级：获得25%火焰伤害抗性，力量+1~

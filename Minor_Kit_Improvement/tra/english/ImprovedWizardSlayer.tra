@@ -1,10 +1,14 @@
 @221 = "^\(Advantages\)[: ]*$"
 @222 = "Advantages:
-SLAYER'S DETERRENCE: A hostile caster approached within 4 feet by a Wizard Slayer needs to save against death each round or suffer a penalty of reduced casting speed (1 point +1 point / 6 Wizard Slayer levels) and reduced casting level (1 level / 2 Wizard Slayer levels) in this round. Every 4 levels of Wizard Slayer increase the difficulty of check by 1 (save with +4 bonus at level 1, -6 penalty at level 40). "
+MAGIC ENDURANCE: As specialist to counter spellcasters, a Wizard Slayer undergo rigorous training against magical threats. This grants him a permanent +3 bonus to Saving Throws vs. Spell.
+MAGIC SHATTER: For every five levels gained, a Wizard Slayers can use his Magic Breach ability one additional time per day. This ability removes one combat protection and one special protection from a target opponent.
+SLAYER'S DETERRENCE: A hostile caster approached within 4 feet by a Wizard Slayer needs to save against death each round or suffer a penalty of reduced casting speed (1 point +1 point / 6 Wizard Slayer levels) and reduced casting level (1 level / 2 Wizard Slayer levels) in 2 rounds. The caster hit by the Wizard Slayer's attack must also make this saving throw, but effects do not stack. Every 4 levels of Wizard Slayer increase the difficulty of check by 1 (save with +4 bonus at level 1, -6 penalty at level 40). "
 @231 = "Far-named Slayer"
 @232 = "Absolute Protection"
 @233 = "Dead Magic Domain"
+@234 = "Magic Shatter"
 @241 = "Name of an epic Wizard Slayer shockes every caster in the land of Faerun. The effective range of Slayer's Deterrence, which decreases hostile casters' casting speed and casting level, grows up to 15 feet. "
 @242 = "An epic Wizard Slayer can stimulate their potential to temporarily protect their beneficial state from being driven away by magic. This ability allows Wizard Slayer to be protected from all abjuration and magic attack spell for one round, including Dispel Magic, Breach, Lower Resistance, etc. "
 @243 = "An epic Wizard Slayer can collect aether that interfere with spells in one day and release them in one moment. This ability turns the area within the sight of Wizard Slayer into a dead magic area and lasts for 1 turn. No one can cast spells during this period, while innate abilities are not affected. "
+@244 = "Magic Shatter: For every five levels gained, a Wizard Slayer can use their Magic Shatter ability one additional time per day. This ability removes one combat protection and one special protection from a target opponent."
 @251 = "Suppressed by Wizard Slayer"

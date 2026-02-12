@@ -1,0 +1,18 @@
+IF
+	!GlobalGT("dualclassed","LOCALS",0)
+THEN
+	RESPONSE #100
+		StartDialogueNoSet(LastSummonerOf()) 
+END
+
+IF
+	OR(4)
+		GlobalGT("dualclassed","LOCALS",0)
+		!Exists(LastSummonerOf())
+		!Exists(LastTalkedToBy())
+		!Class(LastSummonerOf(),SORCERER)
+THEN
+	RESPONSE #100
+		DestroySelf()
+END
+

@@ -1,0 +1,981 @@
+//只召唤了一个，正常初始化
+IF
+	Global("SY#IBMC","GLOBAL",0)
+	Global("IamSummoned","LOCALS",0)
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMC","GLOBAL",1)
+		SetGlobal("IamSummoned","LOCALS",1)
+		Continue()
+END
+//已经存在一个了，但自身未初始化，脚本轮结束等下一轮继续
+IF
+	Global("SY#IBMC","GLOBAL",1)
+	Global("IamSummoned","LOCALS",0)
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMC","GLOBAL",1)
+		SetGlobal("IamSummoned","LOCALS",1)
+END
+//存在超过一个，自身已经初始化或存在至少一个脚本轮，消失并减少记数
+IF
+	GlobalGT("SY#IBMC","GLOBAL",1)
+	Global("IamSummoned","LOCALS",1)
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMC","GLOBAL",-1)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+
+//初始化时没找到召唤者，直接消失
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	!Exists(LastSummonerOf())
+THEN
+	RESPONSE #100
+		IncrementGlobal("SY#IBMC","GLOBAL",-1)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+//如果存在召唤者，则判断召唤者是第几个，记录
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),0)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",1)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),1)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",2)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),2)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",3)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),3)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",4)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),4)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",5)
+		Continue()
+END
+IF
+	!GlobalGT("mysummoner","LOCALS",0)
+	InPartySlot(LastSummonerOf(),5)
+THEN
+	RESPONSE #100
+		SetGlobal("mysummoner","LOCALS",6)
+		Continue()
+END
+
+//全局化
+IF
+	Global("FORMAT","LOCALS",0)
+THEN
+	RESPONSE #100
+		MakeGlobalOverride()
+		SetGlobal("FORMAT","LOCALS",1)
+		Continue()
+END
+
+//根据召唤者身上变量赋予技能
+IF
+	Global("highlevelskills","LOCALS",0)
+	!TriggerOverride(LastSummonerOf(),GlobalGT("SY#IBMHL","LOCALS",0))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",1))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH1",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",2))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH2",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",3))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH3",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",4))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH4",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",5))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH5",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),Global("SY#IBMHL","LOCALS",6))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH6",Myself)
+		Continue()
+END
+IF
+	Global("highlevelskills","LOCALS",0)
+	TriggerOverride(LastSummonerOf(),GlobalGT("SY#IBMHL","LOCALS",6))
+THEN
+	RESPONSE #100
+		SetGlobal("highlevelskills","LOCALS",1)
+		ReallyForceSpellRES("SY#IBMH7",Myself)
+		Continue()
+END
+//武器附魔调整
+IF
+	Global("highlevelskills","LOCALS",0)
+THEN
+	RESPONSE #100
+		ReallyForceSpellRES("SY#IBMEW",Myself)
+		Continue()
+END
+
+//休息死亡消失
+IF
+	Global("IamSummoned","LOCALS",1)
+	Global("SY#IBMC","GLOBAL",0)
+THEN
+	RESPONSE #100
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Die()
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+
+//召唤者死亡
+IF
+	Died(Player1)
+	Global("mysummoner","LOCALS",1)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player2)
+	Global("mysummoner","LOCALS",2)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player3)
+	Global("mysummoner","LOCALS",3)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player4)
+	Global("mysummoner","LOCALS",4)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player5)
+	Global("mysummoner","LOCALS",5)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+IF
+	Died(Player6)
+	Global("mysummoner","LOCALS",6)
+THEN
+	RESPONSE #100
+		SetGlobal("SY#IBMC","GLOBAL",0)
+		SetGlobal("IamSummoned","LOCALS",2)
+		CreateVisualEffectObject("SPGFLSH1",Myself)
+		DestroySelf()
+END
+//消失后不再出现
+IF
+	Global("IamSummoned","LOCALS",2)
+	IsActive(Myself)
+THEN
+	RESPONSE #100
+		Deactivate(Myself)
+		DestroySelf()
+END
+
+//如果中途出问题
+IF
+	!Allegiance(Myself,CONTROLLED)
+THEN
+	RESPONSE #100
+		ChangeEnemyAlly(Myself,CONTROLLED)
+		Continue()
+END
+
+//太近的话
+IF
+	Range([GOODCUTOFF],1)
+THEN
+	RESPONSE #100
+		JumpToObject([GOODCUTOFF])
+		Continue()
+END
+
+//战斗脚本
+IF
+	HotKey(D)
+THEN
+	RESPONSE #100
+		DisplayStringHead(Myself,#95137)
+		SetGlobal("deactivefighting","LOCALS",1)
+END
+
+IF
+	HotKey(N)
+THEN
+	RESPONSE #100
+		DisplayStringHead(Myself,#95135)
+		SetGlobal("deactivefighting","LOCALS",0)
+END
+
+//施法
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_IRONSKIN)
+	CheckStatLT(Myself,1,STONESKINS)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(Myself,CLERIC_IRONSKIN)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_ARMOR_OF_FAITH)  // SPPR111.SPL (信仰盔甲)
+	See([EVILCUTOFF])
+	OR(2)
+		GlobalGT("highlevelskills","LOCALS",2)
+		NumCreatureGT([EVILCUTOFF],3)
+	!CheckSpellState(Myself,ARMOR_OF_FAITH)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+	!StateCheck(Myself,STATE_SILENCED)
+THEN
+	RESPONSE #100
+		Spell(Myself,CLERIC_ARMOR_OF_FAITH)  // SPPR111.SPL (信仰盔甲)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_DRAW_UPON_HOLY_MIGHT)  // SPPR214.SPL (召唤圣力)
+	See([EVILCUTOFF])
+	OR(2)
+		GlobalGT("highlevelskills","LOCALS",5)
+		NumCreatureGT([EVILCUTOFF],3)
+	!StateCheck(Myself,STATE_DRAWUPONHOLYMIGHT)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+	!StateCheck(Myself,STATE_SILENCED)
+THEN
+	RESPONSE #100
+		Spell(Myself,CLERIC_DRAW_UPON_HOLY_MIGHT)  // SPPR214.SPL (召唤圣力)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_CURE_SERIOUS_WOUNDS)
+	See(MostDamagedOf([PC]))
+	HPPercentLT(LastSeenBy(Myself),50)
+	!StateCheck(LastSeenBy(Myself),STATE_NOT_TARGETABLE)
+	!StateCheck(LastSeenBy(Myself),STATE_NOT_APPROACHABLE)
+	!StateCheck(LastSeenBy(Myself),STATE_REALLY_DEAD)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_DEFLECTION)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_TURNING)
+	!CheckStat(LastSeenBy(Myself),2,WIZARD_SPELL_TRAP)
+	!CheckStat(LastSeenBy(Myself),1,CLERIC_SHIELD_OF_THE_ARCHONS)
+	!CheckStat(LastSeenBy(Myself),7,WIZARD_SPELL_IMMUNITY)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_CURE_SERIOUS_WOUNDS)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_CURE_LIGHT_WOUNDS)
+	See(MostDamagedOf([PC]))
+	HPPercentLT(LastSeenBy(Myself),50)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	!StateCheck(LastSeenBy(Myself),STATE_NOT_TARGETABLE)
+	!StateCheck(LastSeenBy(Myself),STATE_NOT_APPROACHABLE)
+	!StateCheck(LastSeenBy(Myself),STATE_REALLY_DEAD)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_CURE_LIGHT_WOUNDS)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+	See([PC])
+	OR(4)
+		StateCheck(LastSeenBy(Myself),STATE_POISONED)
+		StateCheck(LastSeenBy(Myself),STATE_BLIND)
+		CheckSpellState(LastSeenBy(Myself),DISEASED)
+		CheckSpellState(LastSeenBy(Myself),DEAFENED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_DEFLECTION)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+	See([PC])
+	StateCheck(LastSeenBy(Myself),STATE_POISONED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See([GOODCUTOFF])
+	OR(2)
+		StateCheck(LastSeenBy(Myself),STATE_STUNNED)
+		CheckStatGT(LastSeenBy(Myself),0,HELD)
+	HaveSpell(CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	CheckStat(LastSeenBy(Myself),0,WEB)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See([GOODCUTOFF])
+	StateCheck([GOODCUTOFF],STATE_PANIC)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	HaveSpell(CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+	See(SecondNearest([PC]))
+	OR(4)
+		StateCheck(LastSeenBy(Myself),STATE_POISONED)
+		StateCheck(LastSeenBy(Myself),STATE_BLIND)
+		CheckSpellState(LastSeenBy(Myself),DISEASED)
+		CheckSpellState(LastSeenBy(Myself),DEAFENED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_DEFLECTION)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+	See(SecondNearest([PC]))
+	StateCheck(LastSeenBy(Myself),STATE_POISONED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(SecondNearest([GOODCUTOFF]))
+	OR(2)
+		StateCheck(LastSeenBy(Myself),STATE_STUNNED)
+		CheckStatGT(LastSeenBy(Myself),0,HELD)
+	HaveSpell(CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	CheckStat(LastSeenBy(Myself),0,WEB)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(SecondNearest([GOODCUTOFF]))
+	StateCheck([GOODCUTOFF],STATE_PANIC)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	HaveSpell(CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+	See(ThirdNearest([PC]))
+	OR(4)
+		StateCheck(LastSeenBy(Myself),STATE_POISONED)
+		StateCheck(LastSeenBy(Myself),STATE_BLIND)
+		CheckSpellState(LastSeenBy(Myself),DISEASED)
+		CheckSpellState(LastSeenBy(Myself),DEAFENED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_DEFLECTION)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+	See(ThirdNearest([PC]))
+	StateCheck(LastSeenBy(Myself),STATE_POISONED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(ThirdNearest([GOODCUTOFF]))
+	OR(2)
+		StateCheck(LastSeenBy(Myself),STATE_STUNNED)
+		CheckStatGT(LastSeenBy(Myself),0,HELD)
+	HaveSpell(CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	CheckStat(LastSeenBy(Myself),0,WEB)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(ThirdNearest([GOODCUTOFF]))
+	StateCheck([GOODCUTOFF],STATE_PANIC)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	HaveSpell(CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+	See(FourthNearest([PC]))
+	OR(4)
+		StateCheck(LastSeenBy(Myself),STATE_POISONED)
+		StateCheck(LastSeenBy(Myself),STATE_BLIND)
+		CheckSpellState(LastSeenBy(Myself),DISEASED)
+		CheckSpellState(LastSeenBy(Myself),DEAFENED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_DEFLECTION)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+	See(FourthNearest([PC]))
+	StateCheck(LastSeenBy(Myself),STATE_POISONED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(FourthNearest([GOODCUTOFF]))
+	OR(2)
+		StateCheck(LastSeenBy(Myself),STATE_STUNNED)
+		CheckStatGT(LastSeenBy(Myself),0,HELD)
+	HaveSpell(CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	CheckStat(LastSeenBy(Myself),0,WEB)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(FourthNearest([GOODCUTOFF]))
+	StateCheck([GOODCUTOFF],STATE_PANIC)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	HaveSpell(CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+	See(FifthNearest([PC]))
+	OR(4)
+		StateCheck(LastSeenBy(Myself),STATE_POISONED)
+		StateCheck(LastSeenBy(Myself),STATE_BLIND)
+		CheckSpellState(LastSeenBy(Myself),DISEASED)
+		CheckSpellState(LastSeenBy(Myself),DEAFENED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_DEFLECTION)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+	See(FifthNearest([PC]))
+	StateCheck(LastSeenBy(Myself),STATE_POISONED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(FifthNearest([GOODCUTOFF]))
+	OR(2)
+		StateCheck(LastSeenBy(Myself),STATE_STUNNED)
+		CheckStatGT(LastSeenBy(Myself),0,HELD)
+	HaveSpell(CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	CheckStat(LastSeenBy(Myself),0,WEB)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(FifthNearest([GOODCUTOFF]))
+	StateCheck([GOODCUTOFF],STATE_PANIC)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	HaveSpell(CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+	See(SixthNearest([PC]))
+	OR(4)
+		StateCheck(LastSeenBy(Myself),STATE_POISONED)
+		StateCheck(LastSeenBy(Myself),STATE_BLIND)
+		CheckSpellState(LastSeenBy(Myself),DISEASED)
+		CheckSpellState(LastSeenBy(Myself),DEAFENED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!CheckStatGT(LastSeenBy(Myself),0,WIZARD_SPELL_DEFLECTION)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_NEUTRALIZE_POISON)  // SPPR404.SPL (中和毒素)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	HaveSpell(CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+	See(SixthNearest([PC]))
+	StateCheck(LastSeenBy(Myself),STATE_POISONED)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_SLOW_POISON)  // SPPR212.SPL (减缓毒发)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(SixthNearest([GOODCUTOFF]))
+	OR(2)
+		StateCheck(LastSeenBy(Myself),STATE_STUNNED)
+		CheckStatGT(LastSeenBy(Myself),0,HELD)
+	HaveSpell(CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	CheckStat(LastSeenBy(Myself),0,WEB)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_PARALYSIS)  // SPPR308.SPL (移除麻痹)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("deactivefighting","LOCALS",0)
+	ActionListEmpty()
+	See(SixthNearest([GOODCUTOFF]))
+	StateCheck([GOODCUTOFF],STATE_PANIC)
+	!StateCheck(LastSeenBy(Myself),STATE_IMPROVEDINVISIBILITY)
+	CheckStat(LastSeenBy(Myself),0,MINORGLOBE)
+	!StateCheck(LastSeenBy(Myself),STATE_CONFUSED)
+	!StateCheck(LastSeenBy(Myself),STATE_CHARMED)
+	HaveSpell(CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+	CheckStatLT(Myself,50,SPELLFAILUREPRIEST)
+	!StateCheck(Myself,STATE_SILENCED)
+	!CheckStatGT(Myself,0,CLERIC_INSECT_PLAGUE)
+THEN
+	RESPONSE #100
+		Spell(LastSeenBy(Myself),CLERIC_REMOVE_FEAR)  // SPPR108.SPL (移除恐惧)
+END
+
+//跟着走
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",1)
+	InMyArea(Player1)
+	!Range(Player1,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player1)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",2)
+	InMyArea(Player2)
+	!Range(Player2,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player2)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",3)
+	InMyArea(Player3)
+	!Range(Player3,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player3)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",4)
+	InMyArea(Player4)
+	!Range(Player4,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player4)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",5)
+	InMyArea(Player5)
+	!Range(Player5,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player5)
+END
+IF
+	ActionListEmpty()
+	!See([EVILCUTOFF])
+	!Detect([PC])
+	Global("mysummoner","LOCALS",6)
+	InMyArea(Player6)
+	!Range(Player6,30)
+THEN
+	RESPONSE #100
+		MoveToObject(Player6)
+END
+
+//战斗
+IF
+	ActionListEmpty()
+	!ModalState(STEALTH)
+	Global("deactivefighting","LOCALS",0)
+	See(NearestEnemyOf(Myself))
+	WeaponEffectiveVs(NearestEnemyOf(Myself),MAINHAND)
+	WeaponCanDamage(NearestEnemyOf(Myself),MAINHAND)
+THEN
+	RESPONSE #100
+		AttackReevaluate(NearestEnemyOf(Myself),90)
+END
+IF
+	ActionListEmpty()
+	!ModalState(STEALTH)
+	Global("deactivefighting","LOCALS",0)
+	See(SecondNearestEnemyOf(Myself))
+	WeaponEffectiveVs(SecondNearestEnemyOf(Myself),MAINHAND)
+	WeaponCanDamage(SecondNearestEnemyOf(Myself),MAINHAND)
+THEN
+	RESPONSE #100
+		AttackReevaluate(SecondNearestEnemyOf(Myself),90)
+END
+IF
+	ActionListEmpty()
+	!ModalState(STEALTH)
+	Global("deactivefighting","LOCALS",0)
+	See(ThirdNearestEnemyOf(Myself))
+	WeaponEffectiveVs(ThirdNearestEnemyOf(Myself),MAINHAND)
+	WeaponCanDamage(ThirdNearestEnemyOf(Myself),MAINHAND)
+THEN
+	RESPONSE #100
+		AttackReevaluate(ThirdNearestEnemyOf(Myself),90)
+END

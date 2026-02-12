@@ -1,0 +1,10 @@
+//稍微改一下让魂灵别太挤
+IF
+	Allegiance(Myself,GOODCUTOFF)
+	Detect([PC.0.0.SHAMAN])
+	!Range([PC.0.0.SHAMAN],15)
+	CombatCounter(0)
+THEN
+	RESPONSE #100
+		MoveToObject([PC.0.0.SHAMAN])
+END
